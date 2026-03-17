@@ -1,0 +1,50 @@
+# ===== Backend (Java / Maven / Spring Boot) =====
+backend/target/
+backend/*.jar
+backend/*.war
+backend/*.class
+
+# Maven
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IDE - VS Code
+.vscode/
+
+# Logs
+*.log
+backend/logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== Frontend (Node / Vue / Vite) =====
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# ===== General =====
+*.swp
+*.swo
+*~
