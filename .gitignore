@@ -43,6 +43,7 @@ frontend/.cache/
 .env
 .env.*
 !.env.example
+!backend/.env.example
 
 # ===== General =====
 *.swp

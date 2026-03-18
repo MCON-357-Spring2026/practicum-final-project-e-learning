@@ -64,6 +64,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- 📄 Dotenv (loads .env file into Spring Environment) -->
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
         <!-- 🧹 Validation (for @NotNull, @Email, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
