@@ -1,25 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Courses from '../pages/Courses.vue'
-import CourseDetails from '../pages/CourseDetails.vue'
+import Courses from '../pages/courses/index.vue'
+import CourseDetails from '../pages/courses/[id]/CourseDetails.vue'
+import EditCourse from '../pages/courses/[id]/EditCourse.vue'
+import CreateCourse from '../pages/courses/CreateCourse.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
-import CreateCourse from '../pages/CreateCourse.vue'
-import CreateLesson from '../pages/CreateLesson.vue'
-import CreateQuiz from '../pages/CreateQuiz.vue'
+import CreateLesson from '../pages/courses/[id]/lessons/CreateLesson.vue'
+import CreateQuiz from '../pages/courses/[id]/quizes/CreateQuiz.vue'
 import InstructorDashboard from '../pages/InstructorDashboard.vue'
-import LessonView from '../pages/LessonView.vue'
-import QuizView from '../pages/QuizView.vue'
+import LessonView from '../pages/courses/[id]/lessons/[id]/LessonView.vue'
+import QuizView from '../pages/courses/[id]/quizes/[id]/QuizView.vue'
 import ResourceNotFound from '../pages/ResourceNotFound.vue'
 import Unauthorized from '../pages/Unauthorized.vue'
 
 const routes = [
   { path: '/', redirect: '/courses' },
   { path: '/courses', name: 'Courses', component: Courses },
+  { path: '/courses/create', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true } },
   { path: '/courses/:id', name: 'CourseDetails', component: CourseDetails, props: true },
+  { path: '/courses/:id/edit', name: 'EditCourse', component: EditCourse, props: true, meta: { requiresAuth: true } },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
-  { path: '/create-course', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true } },
   { path: '/courses/:courseId/create-lesson', name: 'CreateLesson', component: CreateLesson, props: true, meta: { requiresAuth: true } },
   { path: '/courses/:courseId/create-quiz', name: 'CreateQuiz', component: CreateQuiz, props: true, meta: { requiresAuth: true } },
   { path: '/instructor', name: 'InstructorDashboard', component: InstructorDashboard, meta: { requiresAuth: true } },

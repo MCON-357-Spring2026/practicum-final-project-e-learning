@@ -2,7 +2,7 @@
   <div class="instructor-dashboard">
     <h1>Instructor Dashboard</h1>
     <div class="actions">
-      <router-link to="/create-course" class="btn">+ Create Course</router-link>
+      <router-link to="/courses/create" class="btn">+ Create Course</router-link>
     </div>
     <p v-if="loading">Loading your courses...</p>
     <p v-else-if="error" class="error">{{ error }}</p>

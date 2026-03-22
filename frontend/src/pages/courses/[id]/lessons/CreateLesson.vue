@@ -1,7 +1,7 @@
 <template>
-  <div class="create-course-page">
-    <h1>Create Course</h1>
-    <form @submit.prevent="handleCreate" class="course-form">
+  <div class="create-lesson-page">
+    <h1>Create Lesson</h1>
+    <form @submit.prevent="handleCreate" class="lesson-form">
       <div class="form-group">
         <label for="title">Title</label>
         <input id="title" v-model="form.title" type="text" required />
@@ -10,26 +10,12 @@
         <label for="description">Description</label>
         <textarea id="description" v-model="form.description" rows="4"></textarea>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="department">Department</label>
-          <input id="department" v-model="form.department" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="courseNum">Course Number</label>
-          <input id="courseNum" v-model.number="form.courseNum" type="number" required />
-        </div>
-        <div class="form-group">
-          <label for="credits">Credits</label>
-          <input id="credits" v-model.number="form.credits" type="number" required />
-        </div>
-      </div>
       <div class="form-group">
-        <label for="image">Image URL</label>
-        <input id="image" v-model="form.image" type="text" />
+        <label for="minutes">Duration (minutes)</label>
+        <input id="minutes" v-model.number="form.minutes" type="number" required />
       </div>
       <p v-if="error" class="error">{{ error }}</p>
-      <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Course' }}</button>
+      <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Lesson' }}</button>
     </form>
   </div>
 </template>
@@ -37,20 +23,19 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCourseStore } from '../store/course'
+import { lessonApi } from '../../../../api/lessonApi'
 
-const courseStore = useCourseStore()
+const props = defineProps<{
+  courseId: string
+}>()
+
 const router = useRouter()
 
 const form = reactive({
   title: '',
   description: '',
-  department: '',
-  courseNum: 0,
-  credits: 0,
-  instructor: '',
-  image: '',
-  lessonIDs: [] as number[]
+  minutes: 0,
+  resources: [] as string[]
 })
 
 const error = ref('')
@@ -60,10 +45,10 @@ async function handleCreate() {
   loading.value = true
   error.value = ''
   try {
-    const created = await courseStore.create(form)
-    router.push(`/courses/${created.id}`)
+    await lessonApi.create(form)
+    router.push(`/courses/${props.courseId}`)
   } catch (e: any) {
-    error.value = e.response?.data?.error || 'Failed to create course'
+    error.value = e.response?.data?.error || 'Failed to create lesson'
   } finally {
     loading.value = false
   }
@@ -71,24 +56,15 @@ async function handleCreate() {
 </script>
 
 <style scoped>
-.create-course-page {
+.create-lesson-page {
   max-width: 600px;
   margin: 2rem auto;
 }
 
-.course-form {
+.lesson-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.form-row {
-  display: flex;
-  gap: 1rem;
-}
-
-.form-row .form-group {
-  flex: 1;
 }
 
 .form-group {

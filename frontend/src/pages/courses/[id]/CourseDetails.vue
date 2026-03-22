@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useCourseStore } from '../store/course'
+import { useCourseStore } from '../../../store/course'
 
 const props = defineProps<{
   id: string

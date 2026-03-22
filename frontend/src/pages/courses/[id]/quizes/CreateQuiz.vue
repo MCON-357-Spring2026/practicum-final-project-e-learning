@@ -1,21 +1,13 @@
 <template>
-  <div class="create-lesson-page">
-    <h1>Create Lesson</h1>
-    <form @submit.prevent="handleCreate" class="lesson-form">
+  <div class="create-quiz-page">
+    <h1>Create Quiz</h1>
+    <form @submit.prevent="handleCreate" class="quiz-form">
       <div class="form-group">
-        <label for="title">Title</label>
+        <label for="title">Quiz Title</label>
         <input id="title" v-model="form.title" type="text" required />
       </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" v-model="form.description" rows="4"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="minutes">Duration (minutes)</label>
-        <input id="minutes" v-model.number="form.minutes" type="number" required />
-      </div>
       <p v-if="error" class="error">{{ error }}</p>
-      <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Lesson' }}</button>
+      <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Quiz' }}</button>
     </form>
   </div>
 </template>
@@ -23,7 +15,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { lessonApi } from '../api/lessonApi'
+import { quizApi } from '../../../../api/quizApi'
 
 const props = defineProps<{
   courseId: string
@@ -32,10 +24,7 @@ const props = defineProps<{
 const router = useRouter()
 
 const form = reactive({
-  title: '',
-  description: '',
-  minutes: 0,
-  resources: [] as string[]
+  title: ''
 })
 
 const error = ref('')
@@ -45,10 +34,10 @@ async function handleCreate() {
   loading.value = true
   error.value = ''
   try {
-    await lessonApi.create(form)
+    await quizApi.create(form)
     router.push(`/courses/${props.courseId}`)
   } catch (e: any) {
-    error.value = e.response?.data?.error || 'Failed to create lesson'
+    error.value = e.response?.data?.error || 'Failed to create quiz'
   } finally {
     loading.value = false
   }
@@ -56,12 +45,12 @@ async function handleCreate() {
 </script>
 
 <style scoped>
-.create-lesson-page {
+.create-quiz-page {
   max-width: 600px;
   margin: 2rem auto;
 }
 
-.lesson-form {
+.quiz-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -73,8 +62,7 @@ async function handleCreate() {
   gap: 0.25rem;
 }
 
-.form-group input,
-.form-group textarea {
+.form-group input {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;

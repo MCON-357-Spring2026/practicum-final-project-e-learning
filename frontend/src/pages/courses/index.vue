@@ -16,8 +16,8 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useCourseStore } from '../store/course'
-import CourseCard from '../components/CourseCard.vue'
+import { useCourseStore } from '../../store/course'
+import CourseCard from '../../components/CourseCard.vue'
 
 const courseStore = useCourseStore()
 

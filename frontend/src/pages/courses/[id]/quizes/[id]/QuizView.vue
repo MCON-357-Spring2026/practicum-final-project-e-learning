@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { quizApi } from '../api/quizApi'
+import { quizApi } from '../../../../../api/quizApi'
 
 const props = defineProps<{
   courseId: string

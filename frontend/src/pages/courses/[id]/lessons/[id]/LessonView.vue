@@ -8,8 +8,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { lessonApi, type Lesson } from '../api/lessonApi'
-import LessonPlayer from '../components/LessonPlayer.vue'
+import { lessonApi, type Lesson } from '../../../../../api/lessonApi'
+import LessonPlayer from '../../../../../components/LessonPlayer.vue'
 
 const props = defineProps<{
   courseId: string
