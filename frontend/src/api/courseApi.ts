@@ -4,11 +4,12 @@ export interface Course {
   id: string
   title: string
   description: string
-  instructor: string
+  instructorId: string
   department: string
   credits: number
   courseNum: number
-  lessonIDs: number[]
+  lessonIDs: string[]
+  quizIDs: string[]
   image: string
 }
 

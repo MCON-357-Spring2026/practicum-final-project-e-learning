@@ -49,3 +49,6 @@ frontend/.cache/
 *.swp
 *.swo
 *~
+
+# Node_modules at the root level (if any)
+node_modules/

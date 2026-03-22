@@ -1,5 +1,11 @@
 import axiosClient from './axiosClient'
 
+export interface Quiz {
+  id: string
+  courseId: string
+  title: string
+}
+
 export const quizApi = {
   getAll() {
     return axiosClient.get('/quizzes/')
