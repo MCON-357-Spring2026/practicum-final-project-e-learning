@@ -2,6 +2,7 @@ package ServiceTests;
 
 import com.elearning.model.Course;
 import com.elearning.repository.CourseRepository;
+import com.elearning.repository.PersonRepository;
 import com.elearning.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,9 @@ public class CourseServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
+
+    @Mock
+    private PersonRepository personRepository;
 
     @InjectMocks
     private CourseService courseService;
@@ -82,6 +86,7 @@ public class CourseServiceTest {
     @Test
     void create_ShouldSaveAndReturnCourse() {
         // Arrange
+        testCourse.setInstructorId(null);
         when(courseRepository.save(any(Course.class))).thenReturn(testCourse);
 
         // Act
@@ -156,7 +161,9 @@ public class CourseServiceTest {
     @Test
     void delete_WhenCourseExists_ShouldReturnTrue() {
         // Arrange
-        when(courseRepository.existsById("1")).thenReturn(true);
+        testCourse.setId("1");
+        testCourse.setInstructorId(null);
+        when(courseRepository.findById("1")).thenReturn(Optional.of(testCourse));
         doNothing().when(courseRepository).deleteById("1");
 
         // Act
@@ -164,21 +171,21 @@ public class CourseServiceTest {
 
         // Assert
         assertTrue(result);
-        verify(courseRepository, times(1)).existsById("1");
+        verify(courseRepository, times(1)).findById("1");
         verify(courseRepository, times(1)).deleteById("1");
     }
 
     @Test
     void delete_WhenCourseNotFound_ShouldReturnFalse() {
         // Arrange
-        when(courseRepository.existsById("999")).thenReturn(false);
+        when(courseRepository.findById("999")).thenReturn(Optional.empty());
 
         // Act
         boolean result = courseService.delete("999");
 
         // Assert
         assertFalse(result);
-        verify(courseRepository, times(1)).existsById("999");
+        verify(courseRepository, times(1)).findById("999");
         verify(courseRepository, never()).deleteById(anyString());
     }
 
@@ -209,9 +216,10 @@ public class CourseServiceTest {
 
     @Test
     void update_WhenQuizIDsNull_ShouldNotUpdateQuizIDs() {
-        // Arrange
-        Course updatedData = new Course("Java Advanced", "Dr. Smith", "Computer Science", 3, 101);
-        // quizIDs is null by default
+        // Arrange - use AllArgsConstructor-style to get null quizIDs
+        Course updatedData = new Course();
+        updatedData.setTitle("Java Advanced");
+        // quizIDs remains null since we used no-arg constructor and didn't set it
 
         ArrayList<String> existingQuizIDs = new ArrayList<>(Arrays.asList("q1"));
         Course existingCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101);

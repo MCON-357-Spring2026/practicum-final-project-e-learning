@@ -1,4 +1,4 @@
-package com.elearning.model;
+package com.elearning.enums;
 
 public enum Gender {
     MALE,

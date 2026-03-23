@@ -1,5 +1,6 @@
 package com.elearning.model;
 
+import com.elearning.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

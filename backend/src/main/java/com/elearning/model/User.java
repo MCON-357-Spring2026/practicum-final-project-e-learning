@@ -3,6 +3,8 @@ package com.elearning.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
+import com.elearning.enums.Gender;
+import com.elearning.enums.Role;
 import com.elearning.errors.InvalidEmailError;
 import com.elearning.repository.EnrollmentRepository;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -18,12 +20,12 @@ public class User extends Person{
     private String username;
     private String password;
     private String email;
-    private String role;
+    private Role role;
     private ArrayList<String> enrollmentIds;
     
 
     public User(String fname, String lname, Date dob, Gender gender, HomeAddress address,
-                String username, String password, String email, String role) {
+                String username, String password, String email, Role role) {
         super(fname, lname, dob, gender, address);
         this.username = username;
         this.password = password;

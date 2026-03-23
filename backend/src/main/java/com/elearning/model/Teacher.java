@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.elearning.enums.Gender;
+import com.elearning.enums.Role;
 import com.elearning.repository.CourseRepository;
 
 import lombok.Getter;
@@ -16,7 +18,7 @@ public class Teacher extends User {
     private ArrayList<String> courseIds;
 
     public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
-                   String username, String password, String email, String role, 
+                   String username, String password, String email, Role role, 
                    String department, ArrayList<String> courseIds) {
         super(fname, lname, dob, gender, address, 
             username, password, email, role);
@@ -25,7 +27,7 @@ public class Teacher extends User {
     }
 
     public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
-                   String username, String password, String email, String role,
+                   String username, String password, String email, Role role,
                    String department, String[] courseIds) {
          super(fname, lname, dob, gender, address, 
             username, password, email, role);
@@ -34,7 +36,7 @@ public class Teacher extends User {
     }
 
     public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
-                   String username, String password, String email, String role,
+                   String username, String password, String email, Role role,
                    String department) {
         super(fname, lname, dob, gender, address, 
             username, password, email, role);
@@ -43,7 +45,7 @@ public class Teacher extends User {
     }
 
     public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
-                   String username, String password, String email, String role) {
+                   String username, String password, String email, Role role) {
         super(fname, lname, dob, gender, address,
             username, password, email, role);
         this.department = null;
