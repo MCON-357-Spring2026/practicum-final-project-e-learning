@@ -4,7 +4,7 @@ import { authApi } from '../api/authApi'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const user = ref<{ id: string; email: string; role: string } | null>(null)
+  const user = ref<{ id: string; username: string; role: string } | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -19,14 +19,14 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  async function login(email: string, password: string) {
-    const response = await authApi.login(email, password)
+  async function login(username: string, password: string) {
+    const response = await authApi.login(username, password)
     setToken(response.data.token)
     user.value = response.data.user
   }
 
-  async function register(email: string, password: string, name: string) {
-    const response = await authApi.register(email, password, name)
+  async function register(username: string, password: string, name: string) {
+    const response = await authApi.register(username, password, name)
     setToken(response.data.token)
     user.value = response.data.user
   }

@@ -7,8 +7,8 @@
         <input id="name" v-model="name" type="text" required />
       </div>
       <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" v-model="email" type="email" required />
+        <label for="username">Username</label>
+        <input id="username" v-model="username" type="text" required />
       </div>
       <div class="form-group">
         <label for="password">Password</label>
@@ -30,7 +30,7 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const name = ref('')
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -39,7 +39,7 @@ async function handleRegister() {
   loading.value = true
   error.value = ''
   try {
-    await authStore.register(email.value, password.value, name.value)
+    await authStore.register(username.value, password.value, name.value)
     router.push('/courses')
   } catch (e: any) {
     error.value = e.response?.data?.message || 'Registration failed'

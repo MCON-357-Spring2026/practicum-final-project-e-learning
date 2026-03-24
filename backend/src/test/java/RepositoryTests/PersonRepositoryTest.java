@@ -35,11 +35,11 @@ public class PersonRepositoryTest {
     void setUp() {
         testAddress = new HomeAddress("123 Main St", "Springfield", "IL", "62704");
         testUser = new User("Alice", "Johnson", new Date(), Gender.FEMALE, testAddress,
-                "alice1", "password123", "alice@email.com", Role.STUDENT);
+                "alice1", "password123", null, Role.STUDENT);
         testUser.setId("u1");
 
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", "jane@university.edu", Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
         testTeacher.setId("t1");
     }
 
@@ -104,25 +104,6 @@ public class PersonRepositoryTest {
         when(personRepository.existsById("999")).thenReturn(false);
 
         assertFalse(personRepository.existsById("999"));
-    }
-
-    @Test
-    void findUserByEmail_WhenExists_ShouldReturnUser() {
-        when(personRepository.findUserByEmail("alice@email.com")).thenReturn(Optional.of(testUser));
-
-        Optional<User> result = personRepository.findUserByEmail("alice@email.com");
-
-        assertTrue(result.isPresent());
-        assertEquals("alice@email.com", result.get().getEmail());
-    }
-
-    @Test
-    void findUserByEmail_WhenNotExists_ShouldReturnEmpty() {
-        when(personRepository.findUserByEmail("none@email.com")).thenReturn(Optional.empty());
-
-        Optional<User> result = personRepository.findUserByEmail("none@email.com");
-
-        assertFalse(result.isPresent());
     }
 
     @Test

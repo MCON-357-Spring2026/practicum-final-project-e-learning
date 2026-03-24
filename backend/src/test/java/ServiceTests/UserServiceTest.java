@@ -40,11 +40,11 @@ public class UserServiceTest {
     void setUp() {
         testAddress = new HomeAddress("123 Main St", "Springfield", "IL", "62704");
         testUser = new User("Alice", "Johnson", new Date(), Gender.FEMALE, testAddress,
-                "alice1", "password123", "alice@email.com", Role.STUDENT);
+                "alice1", "password123", null, Role.STUDENT);
         testUser.setId("u1");
 
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", "jane@university.edu", Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
         testTeacher.setId("t1");
     }
 
@@ -102,16 +102,6 @@ public class UserServiceTest {
     }
 
     @Test
-    void getByEmail_ShouldDelegateToRepo() {
-        when(personRepository.findUserByEmail("alice@email.com")).thenReturn(Optional.of(testUser));
-
-        Optional<User> result = userService.getByEmail("alice@email.com");
-
-        assertTrue(result.isPresent());
-        verify(personRepository, times(1)).findUserByEmail("alice@email.com");
-    }
-
-    @Test
     void getByRole_ShouldDelegateToRepo() {
         when(personRepository.findByRole(Role.STUDENT)).thenReturn(List.of(testUser));
 
@@ -155,7 +145,7 @@ public class UserServiceTest {
     @Test
     void update_WhenUserExists_ShouldUpdateFields() {
         User updateData = new User("UpdatedAlice", "Johnson", new Date(), Gender.FEMALE, testAddress,
-                "alice1", "newpass", "alice@email.com", Role.STUDENT);
+                "alice1", "newpass", null, Role.STUDENT);
 
         when(personRepository.findById("u1")).thenReturn(Optional.of(testUser));
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));

@@ -14,8 +14,6 @@ import com.elearning.model.Teacher;
 @Repository
 public interface PersonRepository extends MongoRepository<Person, String>{
 
-    public Optional<User> findUserByEmail(String email);
-
     public Optional<User> findUserByUsername(String username);
 
     public List<User> findByRole(Role role);

@@ -6,6 +6,7 @@ import com.elearning.model.User;
 import com.elearning.service.UserService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -69,6 +70,7 @@ public class TeacherController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateTeacher(@PathVariable String id, @RequestBody Teacher teacher) {
         try {
@@ -81,6 +83,7 @@ public class TeacherController {
         }
     }
 
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> replaceTeacher(@PathVariable String id, @RequestBody Teacher teacher) {
         try {
@@ -93,6 +96,7 @@ public class TeacherController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeacher(@PathVariable String id) {
         if (userService.delete(id)) {

@@ -40,7 +40,7 @@ public class TeacherControllerTest {
     void setUp() {
         testAddress = new HomeAddress("789 Elm St", "Urbana", "IL", "61801");
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", "jane@university.edu", Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
         testTeacher.setId("t1");
     }
 
@@ -58,7 +58,7 @@ public class TeacherControllerTest {
     @Test
     void getAllAdmins_ShouldReturnAdminList() {
         User admin = new User("Admin", "User", new Date(), Gender.MALE, testAddress,
-                "admin1", "pass", "admin@email.com", Role.ADMIN);
+                "admin1", "pass", null, Role.ADMIN);
         when(userService.getByRole(Role.ADMIN)).thenReturn(List.of(admin));
 
         ResponseEntity<List<User>> response = teacherController.getAllAdmins();
@@ -71,7 +71,7 @@ public class TeacherControllerTest {
     @Test
     void getAllPending_ShouldReturnPendingList() {
         User pending = new User("Pending", "User", new Date(), Gender.MALE, testAddress,
-                "pending1", "pass", "pending@email.com", Role.PENDING);
+                "pending1", "pass", null, Role.PENDING);
         when(userService.getByRole(Role.PENDING)).thenReturn(List.of(pending));
 
         ResponseEntity<List<User>> response = teacherController.getAllPending();
@@ -103,7 +103,7 @@ public class TeacherControllerTest {
     @Test
     void getTeacherById_WhenNotTeacher_ShouldReturn404() {
         User plainUser = new User("Alice", "Johnson", new Date(), Gender.FEMALE, testAddress,
-                "alice1", "pass", "alice@email.com", Role.STUDENT);
+                "alice1", "pass", null, Role.STUDENT);
         when(userService.getById("u1")).thenReturn(Optional.of(plainUser));
 
         ResponseEntity<Teacher> response = teacherController.getTeacherById("u1");

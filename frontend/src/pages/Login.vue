@@ -3,8 +3,8 @@
     <h1>Login</h1>
     <form @submit.prevent="handleLogin" class="auth-form">
       <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" v-model="email" type="email" required />
+        <label for="username">Username</label>
+        <input id="username" v-model="username" type="text" required />
       </div>
       <div class="form-group">
         <label for="password">Password</label>
@@ -26,7 +26,7 @@ const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -35,7 +35,7 @@ async function handleLogin() {
   loading.value = true
   error.value = ''
   try {
-    await authStore.login(email.value, password.value)
+    await authStore.login(username.value, password.value)
     const redirect = (route.query.redirect as string) || '/courses'
     router.push(redirect)
   } catch (e: any) {

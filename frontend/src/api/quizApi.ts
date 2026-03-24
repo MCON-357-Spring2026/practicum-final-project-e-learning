@@ -19,8 +19,8 @@ export const quizApi = {
     return axiosClient.post('/quizzes/', quiz)
   },
 
-  submit(id: string, answers: any) {
-    return axiosClient.post(`/quizzes/${id}/submit`, answers)
+  submit(quizId: string, enrollmentId: string, answers: number[]) {
+    return axiosClient.patch(`/enrollments/quiz/${quizId}/submit`, { enrollmentId, answers })
   },
 
   delete(id: string) {

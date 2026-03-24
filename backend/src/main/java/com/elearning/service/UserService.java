@@ -37,10 +37,6 @@ public class UserService implements ServiceInterface<User> {
         return repo.findUserByUsername(username);
     }
 
-    public Optional<User> getByEmail(String email) {
-        return repo.findUserByEmail(email);
-    }
-
     public List<User> getByRole(Role role) {
         return repo.findByRole(role);
     }
@@ -80,7 +76,6 @@ public class UserService implements ServiceInterface<User> {
                     if (user.getGender() != null) existing.setGender(user.getGender());
                     if (user.getAddress() != null) existing.setAddress(user.getAddress());
                     if (user.getUsername() != null) existing.setUsername(user.getUsername());
-                    if (user.getEmail() != null) existing.setEmail(user.getEmail());
                     if (user.getPassword() != null) existing.setPassword(user.getPassword());
                     if (user.getRole() != null) existing.setRole(user.getRole());
 

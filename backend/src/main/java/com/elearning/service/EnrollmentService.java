@@ -2,14 +2,20 @@ package com.elearning.service;
 
 import java.util.List;
 import java.util.Optional;
+import com.elearning.model.Course;
 import com.elearning.model.Enrollment;
+import com.elearning.model.Grade;
 import com.elearning.model.Person;
+import com.elearning.model.Quiz;
 import com.elearning.model.User;
 import com.elearning.errors.CourseNotFoundException;
+import com.elearning.errors.EnrollmentNotFoundException;
+import com.elearning.errors.QuizNotFoundException;
 import com.elearning.errors.StudentNotFoundException;
 import com.elearning.repository.CourseRepository;
 import com.elearning.repository.EnrollmentRepository;
 import com.elearning.repository.PersonRepository;
+import com.elearning.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,11 +23,13 @@ public class EnrollmentService implements ServiceInterface<Enrollment> {
     private final EnrollmentRepository repo;
     private final CourseRepository courseRepo;
     private final PersonRepository personRepo;
+    private final QuizRepository quizRepo;
 
-    public EnrollmentService(EnrollmentRepository repo, CourseRepository courseRepo, PersonRepository personRepo) {
+    public EnrollmentService(EnrollmentRepository repo, CourseRepository courseRepo, PersonRepository personRepo, QuizRepository quizRepo) {
         this.repo = repo;
         this.courseRepo = courseRepo;
         this.personRepo = personRepo;
+        this.quizRepo = quizRepo;
     }
 
     public List<Enrollment> getByStudentId(String studentId) {
@@ -140,6 +148,25 @@ public class EnrollmentService implements ServiceInterface<Enrollment> {
     /**
      * Helper: removes an enrollment ID from the User's enrollmentIds list and saves the user.
      */
+    public Grade submitQuiz(String enrollmentId, String quizId, java.util.ArrayList<Integer> answers) {
+        Enrollment enrollment = repo.findById(enrollmentId)
+                .orElseThrow(() -> new EnrollmentNotFoundException("Enrollment not found with id: " + enrollmentId));
+
+        Quiz quiz = quizRepo.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz not found with id: " + quizId));
+
+        Course course = courseRepo.findById(enrollment.getCourseId())
+                .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + enrollment.getCourseId()));
+
+        double score = quiz.calculateScore(answers);
+        Grade grade = new Grade(quizId, answers, score);
+
+        enrollment.markQuizAsCompleted(quizId, course, grade);
+        repo.save(enrollment);
+
+        return grade;
+    }
+
     private void removeEnrollmentFromUser(String studentId, Enrollment enrollment) {
         personRepo.findById(studentId).ifPresent(person -> {
             if (person instanceof User) {

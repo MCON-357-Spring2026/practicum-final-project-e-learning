@@ -39,7 +39,7 @@ public class UserControllerTest {
     void setUp() {
         HomeAddress address = new HomeAddress("123 Main St", "Springfield", "IL", "62704");
         testUser = new User("Alice", "Johnson", new Date(), Gender.FEMALE, address,
-                "alice1", "password123", "alice@email.com", Role.STUDENT);
+                "alice1", "password123", null, Role.STUDENT);
         testUser.setId("u1");
     }
 
@@ -88,24 +88,6 @@ public class UserControllerTest {
         when(userService.getByUsername("unknown")).thenReturn(Optional.empty());
 
         ResponseEntity<User> response = userController.getUserByUsername("unknown");
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void getUserByEmail_WhenExists_ShouldReturnUser() {
-        when(userService.getByEmail("alice@email.com")).thenReturn(Optional.of(testUser));
-
-        ResponseEntity<User> response = userController.getUserByEmail("alice@email.com");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    void getUserByEmail_WhenNotFound_ShouldReturn404() {
-        when(userService.getByEmail("none@email.com")).thenReturn(Optional.empty());
-
-        ResponseEntity<User> response = userController.getUserByEmail("none@email.com");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

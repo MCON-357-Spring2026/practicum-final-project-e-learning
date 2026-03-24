@@ -43,20 +43,20 @@ public class DatabaseSeeder implements CommandLineRunner {
         // ========== USERS (students and instructors) - created FIRST for referential integrity ==========
         User student1 = new User("Alice", "Johnson", new GregorianCalendar(2000, 5, 15).getTime(),
                 Gender.FEMALE, new HomeAddress("123 Main St", "Springfield", "IL", "62704"),
-                "student1", "password123", "alice.johnson@email.com", Role.STUDENT);
+                "student1", "password123", null, Role.STUDENT);
         User student2 = new User("Bob", "Smith", new GregorianCalendar(1999, 8, 22).getTime(),
                 Gender.MALE, new HomeAddress("456 Oak Ave", "Chicago", "IL", "60601"),
-                "student2", "password456", "bob.smith@email.com", Role.STUDENT);
+                "student2", "password456", null, Role.STUDENT);
 
         Teacher instructor1 = new Teacher("Dr. Jane", "Doe", new GregorianCalendar(1980, 3, 10).getTime(),
                 Gender.FEMALE, new HomeAddress("789 Elm St", "Urbana", "IL", "61801"),
-                "instructor1", "instrpass1", "jane.doe@university.edu", Role.TEACHER, "Computer Science");
+                "instructor1", "instrpass1", null, Role.TEACHER, "Computer Science");
         Teacher instructor2 = new Teacher("Prof. John", "Williams", new GregorianCalendar(1975, 11, 5).getTime(),
                 Gender.MALE, new HomeAddress("321 Pine Rd", "Champaign", "IL", "61820"),
-                "instructor2", "instrpass2", "john.williams@university.edu", Role.TEACHER, "Computer Science");
+                "instructor2", "instrpass2", null, Role.TEACHER, "Computer Science");
         Teacher instructor3 = new Teacher("Dr. Sarah", "Lee", new GregorianCalendar(1982, 7, 18).getTime(),
                 Gender.FEMALE, new HomeAddress("654 Maple Dr", "Evanston", "IL", "60201"),
-                "instructor3", "instrpass3", "sarah.lee@university.edu", Role.TEACHER, "Mathematics");
+                "instructor3", "instrpass3", null, Role.TEACHER, "Mathematics");
 
         student1 = personRepo.save(student1);
         student2 = personRepo.save(student2);

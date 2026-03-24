@@ -2,9 +2,6 @@ package com.elearning.model;
 
 import java.util.ArrayList;
 
-import com.elearning.errors.QuizNotFoundException;
-import com.elearning.repository.QuizRepository;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,15 +16,6 @@ public class Grade {
     private ArrayList<Integer> responses;
     private double score;
     private String feedback;
-    private QuizRepository quizRepo;
-
-    public Grade(String quizId, ArrayList<Integer> responses) {
-        this.quizId = quizId;
-        this.responses = responses;
-        Quiz quiz = quizRepo.findById(quizId).orElseThrow(() -> new QuizNotFoundException());
-        this.score = quiz.calculateScore(responses);
-        this.feedback = generateFeedback();
-    }
 
     public Grade(String quizId, ArrayList<Integer> responses, double score) {
         this.quizId = quizId;

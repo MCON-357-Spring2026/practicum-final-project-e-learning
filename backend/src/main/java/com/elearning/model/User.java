@@ -2,10 +2,8 @@ package com.elearning.model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Pattern;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
-import com.elearning.errors.InvalidEmailError;
 import com.elearning.repository.EnrollmentRepository;
 import org.springframework.data.mongodb.core.index.Indexed;
 import lombok.Getter;
@@ -13,8 +11,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class User extends Person{
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
     @Indexed(unique = true)
     private String username;
@@ -29,15 +25,12 @@ public class User extends Person{
         super(fname, lname, dob, gender, address);
         this.username = username;
         this.password = password;
-        setEmail(email);
+        this.email = email;
         this.role = role;
         this.enrollmentIds = new ArrayList<>();
     }
 
     public void setEmail(String email) {
-        if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
-            throw new InvalidEmailError();
-        }
         this.email = email;
     }
 
