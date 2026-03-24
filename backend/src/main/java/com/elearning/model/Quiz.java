@@ -81,5 +81,18 @@ public class Quiz {
         this.courseId = courseId;
     }
 
+    public double calculateScore(ArrayList<Integer> responses) {
+        if (responses.size() != questions.size()) {
+            throw new IllegalArgumentException("Number of responses must match number of questions");
+        }
+        int correctCount = 0;
+        for (int i = 0; i < questions.size(); i++) {
+            if (questions.get(i).getCorrectOptionIndex() == responses.get(i)) {
+                correctCount++;
+            }
+        }
+        return (double) correctCount / questions.size() * 100;
+    }
+
     // Getters and setters can be added here
 }

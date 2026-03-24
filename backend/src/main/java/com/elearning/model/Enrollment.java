@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
@@ -25,14 +26,14 @@ public class Enrollment {
     private String courseId;
     private String progress; // e.g., "Not Started", "In Progress", "Completed"
     private ArrayList<String> completedLessons; // List of completed lesson IDs
-    private Map<String, Double> completedQuizzes; // List of completed quiz IDs
+    private Map<String, Grade> completedQuizzes; // Quiz ID -> Grade
 
     public Enrollment(String studentId, String courseId) {
         this.studentId = studentId;
         this.courseId = courseId;
         this.progress = "Not Started";
         this.completedLessons = new ArrayList<>();
-        this.completedQuizzes = Map.of();
+        this.completedQuizzes = new HashMap<>();
     }
 
     public boolean isLessonCompleted(String lessonId) {
@@ -71,12 +72,12 @@ public class Enrollment {
         }
     }
 
-    public void markQuizAsCompleted(String quizId, Course course, double score) {
+    public void markQuizAsCompleted(String quizId, Course course, Grade grade) {
         if (!course.getQuizIDs().contains(quizId)) {
             throw new IllegalArgumentException("Quiz does not belong to this course");
         }
         if (!completedQuizzes.containsKey(quizId)) {
-            completedQuizzes.put(quizId, score);
+            completedQuizzes.put(quizId, grade);
             updateProgress(course);
         }
     }
