@@ -12,6 +12,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a course in the e-learning platform. A course belongs to a department,
+ * is taught by an instructor, and contains lists of lesson and quiz IDs.
+ * Uniquely identified by the combination of department and course number.
+ */
 @Getter @Setter 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +37,15 @@ public class Course {
     private String image;
 
 
+    /**
+     * Constructs a new Course with basic metadata.
+     *
+     * @param title        course title
+     * @param instructorId the ID of the instructor teaching this course
+     * @param department   academic department
+     * @param credits      number of credit hours
+     * @param courseNum    course catalog number
+     */
     public Course(String title, String instructorId, String department, int credits, int courseNum) {
         this.title = title;
         this.instructorId = instructorId;
@@ -57,6 +71,13 @@ public class Course {
         this.lessonIDs.add(lessonID);
     }
 
+    /**
+     * Adds a lesson ID after verifying the lesson exists.
+     *
+     * @param lessonID   the lesson ID to add
+     * @param lessonRepo repository used to verify existence
+     * @throws IllegalArgumentException if the lesson is not found
+     */
     public void addLessonID(String lessonID, LessonRepository lessonRepo) {
         if (!lessonRepo.existsById(lessonID)) {
             throw new IllegalArgumentException("Lesson not found with id: " + lessonID);
@@ -83,6 +104,13 @@ public class Course {
         this.quizIDs.add(quizID);
     }
 
+    /**
+     * Adds a quiz ID after verifying the quiz exists.
+     *
+     * @param quizID   the quiz ID to add
+     * @param quizRepo repository used to verify existence
+     * @throws IllegalArgumentException if the quiz is not found
+     */
     public void addQuizID(String quizID, QuizRepository quizRepo) {
         if (!quizRepo.existsById(quizID)) {
             throw new IllegalArgumentException("Quiz not found with id: " + quizID);
