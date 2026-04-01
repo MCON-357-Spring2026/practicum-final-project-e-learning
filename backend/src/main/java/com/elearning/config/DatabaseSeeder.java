@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
+/**
+ * Application startup component that seeds the MongoDB database with sample
+ * users, courses, lessons, quizzes, and enrollments when the database is empty.
+ */
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
@@ -30,6 +34,11 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.personRepo = personRepo;
     }
 
+    /**
+     * Seeds the database with sample data if no courses exist.
+     *
+     * @param args command-line arguments (unused)
+     */
     @Override
     public void run(String... args) {
         // Only seed if the database is empty
