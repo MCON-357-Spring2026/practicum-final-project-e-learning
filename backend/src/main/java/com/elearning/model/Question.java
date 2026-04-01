@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents a single multiple-choice question within a {@link Quiz}.
+ * Contains the question text, answer options, and the index of the correct option.
+ */
 @Getter @Setter 
 @AllArgsConstructor
 @NoArgsConstructor
