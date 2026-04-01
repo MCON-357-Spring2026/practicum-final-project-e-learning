@@ -10,6 +10,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 
+/**
+ * Represents a quiz associated with a course. Contains a list of {@link Question}
+ * objects and provides methods to manage questions and calculate scores.
+ * Stored in the "quizzes" MongoDB collection.
+ */
 @Getter @Setter 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -74,6 +79,13 @@ public class Quiz {
         this.questions.removeIf(q -> q.getQuestionText().equals(questionText));
     }
 
+    /**
+     * Sets the course ID after verifying the course exists.
+     *
+     * @param courseId   the course ID to set
+     * @param courseRepo repository used to verify existence
+     * @throws CourseNotFoundException if the course is not found
+     */
     public void setCourseId(String courseId, CourseRepository courseRepo) {
         if (!courseRepo.existsById(courseId)) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
@@ -81,6 +93,13 @@ public class Quiz {
         this.courseId = courseId;
     }
 
+    /**
+     * Calculates the score as a percentage based on student responses.
+     *
+     * @param responses list of selected answer indices, one per question
+     * @return score as a percentage (0–100)
+     * @throws IllegalArgumentException if the number of responses doesn't match the number of questions
+     */
     public double calculateScore(ArrayList<Integer> responses) {
         if (responses.size() != questions.size()) {
             throw new IllegalArgumentException("Number of responses must match number of questions");
