@@ -1,5 +1,8 @@
 package com.elearning.model;
 
+/**
+ * Represents a physical home address with street, city, state, and zip code.
+ */
 public class HomeAddress {
     private String street;
     private String city;
@@ -9,6 +12,14 @@ public class HomeAddress {
     public HomeAddress() {
     }
 
+    /**
+     * Constructs a HomeAddress with all fields.
+     *
+     * @param street  street address
+     * @param city    city name
+     * @param state   state abbreviation
+     * @param zipCode postal zip code
+     */
     public HomeAddress(String street, String city, String state, String zipCode) {
         this.street = street;
         this.city = city;
