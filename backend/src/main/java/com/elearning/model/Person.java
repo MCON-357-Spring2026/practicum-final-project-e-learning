@@ -10,6 +10,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
+/**
+ * Base entity representing a person in the system.
+ * Stored in the "people" MongoDB collection. Serves as the parent class for
+ * {@link User} and {@link Teacher}.
+ */
 @Getter @Setter 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +29,15 @@ public class Person {
     private Gender gender;
     private HomeAddress address;
 
+    /**
+     * Constructs a new Person with the given personal details.
+     *
+     * @param fname   first name
+     * @param lname   last name
+     * @param dob     date of birth
+     * @param gender  gender
+     * @param address home address
+     */
     public Person(String fname, String lname, Date dob, Gender gender, HomeAddress address) {
         this.firstName = fname;
         this.lastName = lname;
