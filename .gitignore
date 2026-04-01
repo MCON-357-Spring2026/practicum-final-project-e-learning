@@ -46,9 +46,7 @@ frontend/.cache/
 !backend/.env.example
 
 # ===== General =====
+node_modules/
 *.swp
 *.swo
 *~
-
-# Node_modules at the root level (if any)
-node_modules/
