@@ -7,6 +7,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
+/**
+ * Represents an internal message between two users in the platform.
+ * Stored in the "messages" MongoDB collection.
+ */
 @Document(collection = "messages")
 @Data
 @Builder
