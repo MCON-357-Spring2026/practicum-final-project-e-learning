@@ -11,6 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a lesson within a course. Contains content details such as title,
+ * description, duration, resource links, and media URLs.
+ * Stored in the "lessons" MongoDB collection.
+ */
 @Getter @Setter 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +38,13 @@ public class Lesson {
         this.description = description;
     }
 
+    /**
+     * Sets the course ID after verifying the course exists.
+     *
+     * @param courseId   the course ID to associate with this lesson
+     * @param courseRepo repository used to verify course existence
+     * @throws CourseNotFoundException if the course is not found
+     */
     public void setCourseId(String courseId, CourseRepository courseRepo) {
         if (!courseRepo.existsById(courseId)) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
