@@ -1,0 +1,33 @@
+package com.elearning.model;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDateTime;
+
+/**
+ * Represents an internal message between two users in the platform.
+ * Stored in the "messages" MongoDB collection.
+ */
+@Document(collection = "messages")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Message {
+
+    @Id
+    private String id;
+
+    private String senderId;
+    private String receiverId;
+
+    private String subject;
+    private String body;
+
+    private boolean read;
+
+    private LocalDateTime sentAt;
+}

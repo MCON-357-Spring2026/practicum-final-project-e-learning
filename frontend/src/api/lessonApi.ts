@@ -1,0 +1,35 @@
+import axiosClient from './axiosClient'
+
+export interface Lesson {
+  id: string
+  title: string
+  description: string
+  minutes: number
+  resources: string[]
+}
+
+export const lessonApi = {
+  getAll() {
+    return axiosClient.get<Lesson[]>('/lessons/')
+  },
+
+  getById(id: string) {
+    return axiosClient.get<Lesson>(`/lessons/${id}`)
+  },
+
+  create(lesson: Omit<Lesson, 'id'>) {
+    return axiosClient.post<Lesson>('/lessons/', lesson)
+  },
+
+  update(id: string, lesson: Partial<Lesson>) {
+    return axiosClient.patch<Lesson>(`/lessons/${id}`, lesson)
+  },
+
+  replace(id: string, lesson: Omit<Lesson, 'id'>) {
+    return axiosClient.put<Lesson>(`/lessons/${id}`, lesson)
+  },
+
+  delete(id: string) {
+    return axiosClient.delete(`/lessons/${id}`)
+  }
+}
