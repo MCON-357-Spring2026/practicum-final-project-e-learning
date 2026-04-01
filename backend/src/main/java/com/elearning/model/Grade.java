@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents the result of a quiz submission. Contains the quiz ID, student
+ * responses, calculated score (0–100), and auto-generated feedback text.
+ */
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +21,14 @@ public class Grade {
     private double score;
     private String feedback;
 
+    /**
+     * Constructs a Grade with a quiz ID, responses, and score.
+     * Feedback is automatically generated based on the score.
+     *
+     * @param quizId    the ID of the quiz
+     * @param responses the student's selected answer indices
+     * @param score     the calculated score percentage (0–100)
+     */
     public Grade(String quizId, ArrayList<Integer> responses, double score) {
         this.quizId = quizId;
         this.responses = responses;
@@ -24,6 +36,11 @@ public class Grade {
         this.feedback = generateFeedback();
     }
 
+    /**
+     * Generates feedback text based on the score.
+     *
+     * @return a feedback string corresponding to the score range
+     */
     private String generateFeedback() {
         if (score >= 90) {
             return "Excellent work!";
