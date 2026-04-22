@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * Service handling user authentication and registration.
+ * Validates credentials, generates JWT tokens, and creates new user accounts.
+ */
 @Service
 public class AuthService {
 
@@ -24,6 +28,13 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Authenticates a user and returns a JWT token with user info.
+     *
+     * @param request the login request containing username and password
+     * @return a map containing the JWT token and user details
+     * @throws IllegalArgumentException if the credentials are invalid
+     */
     public Map<String, Object> login(LoginRequest request) {
         User user = personRepository.findUserByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
@@ -44,20 +55,37 @@ public class AuthService {
         );
     }
 
+    /**
+     * Registers a new user (student or teacher) and returns a JWT token.
+     * Students are assigned the STUDENT role; teachers are assigned the PENDING role.
+     *
+     * @param request the registration request containing credentials and personal info
+     * @return a map containing the JWT token and new user details
+     * @throws IllegalArgumentException if the username is already in use
+     */
     public Map<String, Object> register(RegisterRequest request) {
         if (personRepository.findUserByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already in use");
         }
 
-        String[] nameParts = request.getName() != null ? request.getName().split(" ", 2) : new String[]{"User", ""};
-        String firstName = nameParts[0];
-        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        User savedUser;
 
-        User user = new User(firstName, lastName, null, null, null,
-                request.getUsername(), passwordEncoder.encode(request.getPassword()),
-                null, Role.STUDENT);
-
-        User savedUser = (User) personRepository.save(user);
+        if ("teacher".equalsIgnoreCase(request.getAccountType())) {
+            com.elearning.model.Teacher teacher = new com.elearning.model.Teacher(
+                    request.getFirstName(), request.getLastName(),
+                    request.getDateOfBirth(), request.getGender(), request.getAddress(),
+                    request.getUsername(), encodedPassword, request.getEmail(),
+                    Role.PENDING);
+            savedUser = (User) personRepository.save(teacher);
+        } else {
+            User user = new User(
+                    request.getFirstName(), request.getLastName(),
+                    request.getDateOfBirth(), request.getGender(), request.getAddress(),
+                    request.getUsername(), encodedPassword, request.getEmail(),
+                    Role.STUDENT);
+            savedUser = (User) personRepository.save(user);
+        }
 
         String token = jwtUtil.generateToken(savedUser.getUsername(), savedUser.getId(), savedUser.getRole().name());
 

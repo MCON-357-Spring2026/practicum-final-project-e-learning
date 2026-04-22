@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * REST controller for authentication endpoints.
+ * Handles user login and registration at {@code /api/auth}.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -19,6 +23,12 @@ public class AuthController {
         this.authService = authService;
     }
 
+    /**
+     * Authenticates a user and returns a JWT token.
+     *
+     * @param request the login credentials
+     * @return 200 with token and user info, or 401 if credentials are invalid
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
@@ -26,9 +36,18 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Login failed: " + e.getClass().getSimpleName() + " - " + e.getMessage()));
         }
     }
 
+    /**
+     * Registers a new user and returns a JWT token.
+     *
+     * @param request the registration details
+     * @return 201 with token and user info, or 409 if username is taken
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {

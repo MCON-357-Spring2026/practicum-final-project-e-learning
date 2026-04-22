@@ -15,7 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
+/**
+ * Spring Security configuration that defines the HTTP security filter chain,
+ * endpoint authorization rules, password encoding, and authentication management.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -23,15 +28,27 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final CustomAuthEntryPoint authEntryPoint;
+    private final CorsConfigurationSource corsConfigurationSource;
 
-    public SecurityConfig(JwtFilter jwtFilter, CustomAuthEntryPoint authEntryPoint) {
+    public SecurityConfig(JwtFilter jwtFilter, CustomAuthEntryPoint authEntryPoint,
+                          CorsConfigurationSource corsConfigurationSource) {
         this.jwtFilter = jwtFilter;
         this.authEntryPoint = authEntryPoint;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
+    /**
+     * Configures the security filter chain with stateless session management,
+     * JWT filter integration, and role-based endpoint authorization.
+     *
+     * @param http the {@link HttpSecurity} builder
+     * @return the configured {@link SecurityFilterChain}
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
@@ -60,6 +77,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/teachers/admin").hasRole("ADMIN")
                 .requestMatchers("/api/teachers/pending").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/teachers/*/role").hasRole("ADMIN")
+                // Teacher preview — public
+                .requestMatchers(HttpMethod.GET, "/api/teachers/*/preview").permitAll()
                 // Enrollments — authenticated
                 .requestMatchers("/api/enrollments/**").authenticated()
                 // Everything else — authenticated
@@ -69,11 +88,23 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides a BCrypt password encoder bean.
+     *
+     * @return a {@link BCryptPasswordEncoder} instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Exposes the {@link AuthenticationManager} bean from the given configuration.
+     *
+     * @param config the Spring authentication configuration
+     * @return the authentication manager
+     * @throws Exception if the manager cannot be obtained
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
