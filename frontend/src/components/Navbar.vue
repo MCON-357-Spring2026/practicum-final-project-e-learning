@@ -1,10 +1,14 @@
 <template>
   <nav class="navbar">
-    <router-link to="/courses" class="navbar-brand">E-Learning</router-link>
+    <router-link to="/courses" class="navbar-brand">
+      <img src="@/assets/logo.png" alt="Logo" class="navbar-logo" />
+      E-Learning
+    </router-link>
     <div class="navbar-links">
       <router-link to="/courses">Courses</router-link>
       <template v-if="authStore.isAuthenticated">
-        <router-link to="/instructor">Dashboard</router-link>
+        <router-link :to="dashboardRoute">Dashboard</router-link>
+        <router-link to="/profile">Profile</router-link>
         <button @click="handleLogout" class="btn-link">Logout</button>
       </template>
       <template v-else>
@@ -16,11 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '../store/auth'
+import { computed } from 'vue'
+import { useAuthStore } from '@/store/auth'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
+
+const dashboardRoute = computed(() => {
+  return authStore.user?.role === 'TEACHER' || authStore.user?.role === 'ADMIN' ? '/instructor' : '/dashboard'
+})
 
 function handleLogout() {
   authStore.logout()
@@ -39,10 +48,19 @@ function handleLogout() {
 }
 
 .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.25rem;
   font-weight: bold;
   color: #e94560;
   text-decoration: none;
+}
+
+.navbar-logo {
+  height: 48px;
+  width: 48px;
+  object-fit: contain;
 }
 
 .navbar-links {

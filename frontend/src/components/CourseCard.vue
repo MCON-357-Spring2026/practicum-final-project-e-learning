@@ -1,5 +1,5 @@
 <template>
-  <div class="course-card" @click="$router.push(`/courses/${course.id}`)">
+  <div class="course-card" @click="navigate">
     <img v-if="course.image" :src="course.image" :alt="course.title" class="course-image" />
     <div class="course-image placeholder" v-else>📚</div>
     <div class="course-info">
@@ -11,11 +11,31 @@
 </template>
 
 <script setup lang="ts">
-import type { Course } from '../api/courseApi'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
+import type { Course } from '@/api/courseApi'
 
-defineProps<{
+const props = withDefaults(defineProps<{
   course: Course
-}>()
+  enrolled?: boolean
+}>(), { enrolled: false })
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+function navigate() {
+  const user = authStore.user
+  const hasAccess =
+    props.enrolled ||
+    user?.role === 'ADMIN' ||
+    (user?.role === 'TEACHER' && user.id === props.course.instructorId)
+
+  if (hasAccess) {
+    router.push(`/courses/${props.course.id}`)
+  } else {
+    router.push(`/courses/${props.course.id}/preview`)
+  }
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
   <div class="quiz-question">
-    <h3>{{ questionNumber }}. {{ question.text }}</h3>
+    <h3>{{ questionNumber }}. {{ question.questionText }}</h3>
     <div class="options">
       <label
         v-for="(option, index) in question.options"
@@ -23,9 +23,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { QuizQuestion } from '@/api/quizApi'
 
 defineProps<{
-  question: { text: string; options: string[] }
+  question: QuizQuestion
   questionNumber: number
 }>()
 
