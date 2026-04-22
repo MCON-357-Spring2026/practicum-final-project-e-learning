@@ -38,10 +38,10 @@ public class Person {
      * @param gender  gender
      * @param address home address
      */
-    public Person(String fname, String lname, Date dob, Gender gender, HomeAddress address) {
-        this.firstName = fname;
-        this.lastName = lname;
-        this.dateOfBirth = dob;
+    public Person(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.address = address;
     }

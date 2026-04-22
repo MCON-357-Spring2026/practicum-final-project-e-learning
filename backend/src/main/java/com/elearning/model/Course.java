@@ -45,9 +45,23 @@ public class Course {
      * @param department   academic department
      * @param credits      number of credit hours
      * @param courseNum    course catalog number
+     * @param description  course description
      */
-    public Course(String title, String instructorId, String department, int credits, int courseNum) {
+    public Course(String title, String instructorId, String department, int credits, int courseNum, String description) {
         this.title = title;
+        this.instructorId = instructorId;
+        this.department = department;
+        this.credits = credits;
+        this.courseNum = courseNum;
+        this.description = description;
+        this.lessonIDs = new ArrayList<>();
+        this.quizIDs = new ArrayList<>();
+    }
+
+        public Course(String id, String title, String description,String instructorId, String department, int credits, int courseNum) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
         this.instructorId = instructorId;
         this.department = department;
         this.credits = credits;

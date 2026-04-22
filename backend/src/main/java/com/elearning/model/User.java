@@ -7,6 +7,7 @@ import com.elearning.enums.Role;
 import com.elearning.repository.EnrollmentRepository;
 import org.springframework.data.mongodb.core.index.Indexed;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -15,6 +16,7 @@ import lombok.Setter;
  * of enrollment IDs linking to {@link Enrollment} records.
  */
 @Getter @Setter
+@NoArgsConstructor
 public class User extends Person{
 
     @Indexed(unique = true)
@@ -38,9 +40,9 @@ public class User extends Person{
      * @param email    email address (optional)
      * @param role     user role
      */
-    public User(String fname, String lname, Date dob, Gender gender, HomeAddress address,
+    public User(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                 String username, String password, String email, Role role) {
-        super(fname, lname, dob, gender, address);
+        super(firstName, lastName, dateOfBirth, gender, address);
         this.username = username;
         this.password = password;
         this.email = email;

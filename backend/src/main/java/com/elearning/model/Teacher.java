@@ -9,6 +9,7 @@ import com.elearning.enums.Role;
 import com.elearning.repository.CourseRepository;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -16,41 +17,42 @@ import lombok.Setter;
  * Extends {@link User} with a department and a list of course IDs they teach.
  */
 @Getter @Setter
+@NoArgsConstructor
 public class Teacher extends User {
 
     private String department;
     private ArrayList<String> courseIds;
 
-    public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
+    public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role, 
                    String department, ArrayList<String> courseIds) {
-        super(fname, lname, dob, gender, address, 
+        super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;
         this.courseIds = courseIds;
     }
 
-    public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
+    public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role,
                    String department, String[] courseIds) {
-         super(fname, lname, dob, gender, address, 
+         super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;
         this.courseIds = new ArrayList<>(Arrays.asList(courseIds));
     }
 
-    public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
+    public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role,
                    String department) {
-        super(fname, lname, dob, gender, address, 
+        super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;
         this.courseIds = new ArrayList<>();
     }
 
-    public Teacher(String fname, String lname, Date dob, Gender gender, HomeAddress address,
+    public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role) {
-        super(fname, lname, dob, gender, address,
+        super(firstName, lastName, dateOfBirth, gender, address,
             username, password, email, role);
         this.department = null;
         this.courseIds = new ArrayList<>();
