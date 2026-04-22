@@ -1,23 +1,23 @@
 <template>
-  <div class="inbox-page">
-    <div class="inbox-header">
-      <h1>Inbox</h1>
-      <div class="inbox-actions">
-        <router-link to="/messages/sent" class="btn-link">Sent</router-link>
+  <div class="sent-page">
+    <div class="sent-header">
+      <h1>Sent</h1>
+      <div class="sent-actions">
+        <router-link to="/messages" class="btn-link">Inbox</router-link>
         <router-link to="/messages/compose" class="btn-compose">Compose</router-link>
       </div>
     </div>
 
     <p v-if="loading" class="status-text">Loading messages...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
-    <p v-else-if="messages.length === 0" class="status-text">Your inbox is empty</p>
+    <p v-else-if="messages.length === 0" class="status-text">No sent messages</p>
 
     <div v-else class="message-list">
       <MessagePreviewCard
         v-for="msg in messages"
         :key="msg.id"
         :message="msg"
-        mode="inbox"
+        mode="sent"
       />
     </div>
   </div>
@@ -44,7 +44,7 @@ onMounted(async () => {
     return
   }
   try {
-    const { data } = await messageApi.getByRecipientId(authStore.user.id)
+    const { data } = await messageApi.getBySenderId(authStore.user.id)
     messages.value = data.sort(
       (a: MessagePreviewData, b: MessagePreviewData) =>
         new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
@@ -58,26 +58,26 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.inbox-page {
+.sent-page {
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
 
-.inbox-header {
+.sent-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.inbox-header h1 {
+.sent-header h1 {
   font-size: 1.5rem;
   font-weight: 400;
   color: #202124;
 }
 
-.inbox-actions {
+.sent-actions {
   display: flex;
   gap: 0.75rem;
   align-items: center;

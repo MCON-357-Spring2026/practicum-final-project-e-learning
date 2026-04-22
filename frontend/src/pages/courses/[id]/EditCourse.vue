@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { courseApi } from '../../../api/courseApi'
+import { courseApi } from '@/api/courseApi'
 
 const props = defineProps<{
   id: string

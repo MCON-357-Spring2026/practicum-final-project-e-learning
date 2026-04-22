@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../store/auth'
+import { useAuthStore } from '@/store/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -36,10 +36,11 @@ async function handleLogin() {
   error.value = ''
   try {
     await authStore.login(username.value, password.value)
-    const redirect = (route.query.redirect as string) || '/courses'
+    const redirect = route.query.redirect as string
+      || (authStore.user?.role === 'TEACHER' ? '/instructor' : '/dashboard')
     router.push(redirect)
   } catch (e: any) {
-    error.value = e.response?.data?.message || 'Login failed'
+    error.value = e.response?.data?.error || 'Login failed. Please check your credentials.'
   } finally {
     loading.value = false
   }

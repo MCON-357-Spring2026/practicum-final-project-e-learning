@@ -50,10 +50,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useCourseStore } from '../../../store/course'
-import { lessonApi, type Lesson } from '../../../api/lessonApi'
-import { quizApi, type Quiz } from '../../../api/quizApi'
-import { userApi } from '../../../api/userApi'
+import { useCourseStore } from '@/store/course'
+import { lessonApi, type Lesson } from '@/api/lessonApi'
+import { quizApi, type Quiz } from '@/api/quizApi'
+import axiosClient from '@/api/axiosClient'
 
 const props = defineProps<{
   id: string
@@ -80,7 +80,7 @@ onMounted(async () => {
   // Fetch instructor name
   if (c.instructorId) {
     promises.push(
-      userApi.getById(c.instructorId).then(res => {
+      axiosClient.get(`/teachers/${c.instructorId}/preview`).then(res => {
         instructorName.value = `${res.data.firstName} ${res.data.lastName}`
       }).catch(() => {})
     )

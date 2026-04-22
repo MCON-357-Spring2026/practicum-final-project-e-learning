@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { courseApi, type Course } from '../api/courseApi'
+import { courseApi, type Course } from '@/api/courseApi'
 
 const courses = ref<Course[]>([])
 const loading = ref(false)

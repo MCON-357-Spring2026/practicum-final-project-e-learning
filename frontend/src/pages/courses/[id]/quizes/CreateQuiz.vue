@@ -1,21 +1,22 @@
 <template>
   <div class="create-quiz-page">
     <h1>Create Quiz</h1>
-    <form @submit.prevent="handleCreate" class="quiz-form">
-      <div class="form-group">
-        <label for="title">Quiz Title</label>
-        <input id="title" v-model="form.title" type="text" required />
-      </div>
-      <p v-if="error" class="error">{{ error }}</p>
-      <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Quiz' }}</button>
-    </form>
+    <QuizForm
+      :form="form"
+      submitLabel="Create Quiz"
+      :loading="loading"
+      :error="error"
+      @submit="handleCreate"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { quizApi } from '../../../../api/quizApi'
+import { quizApi } from '@/api/quizApi'
+import QuizForm from '@/components/QuizForm.vue'
+import type { QuestionForm } from '@/components/QuizForm.vue'
 
 const props = defineProps<{
   courseId: string
@@ -24,7 +25,8 @@ const props = defineProps<{
 const router = useRouter()
 
 const form = reactive({
-  title: ''
+  title: '',
+  questions: [] as QuestionForm[]
 })
 
 const error = ref('')
@@ -34,7 +36,11 @@ async function handleCreate() {
   loading.value = true
   error.value = ''
   try {
-    await quizApi.create(form)
+    await quizApi.create({
+      courseId: props.courseId,
+      title: form.title,
+      questions: form.questions
+    })
     router.push(`/courses/${props.courseId}`)
   } catch (e: any) {
     error.value = e.response?.data?.error || 'Failed to create quiz'
@@ -46,44 +52,7 @@ async function handleCreate() {
 
 <style scoped>
 .create-quiz-page {
-  max-width: 600px;
+  max-width: 700px;
   margin: 2rem auto;
-}
-
-.quiz-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.form-group input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-button {
-  padding: 0.6rem;
-  background-color: #e94560;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.6;
-}
-
-.error {
-  color: #e94560;
 }
 </style>

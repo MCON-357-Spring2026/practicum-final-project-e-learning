@@ -37,9 +37,10 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCourseStore } from '../../store/course'
+import { useAuthStore } from '@/store/auth'
+import { courseApi } from '@/api/courseApi'
 
-const courseStore = useCourseStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 const form = reactive({
@@ -48,9 +49,7 @@ const form = reactive({
   department: '',
   courseNum: 0,
   credits: 0,
-  instructor: '',
-  image: '',
-  lessonIDs: [] as number[]
+  image: ''
 })
 
 const error = ref('')
@@ -60,8 +59,8 @@ async function handleCreate() {
   loading.value = true
   error.value = ''
   try {
-    const created = await courseStore.create(form)
-    router.push(`/courses/${created.id}`)
+    const res = await courseApi.create(form)
+    router.push(`/courses/${res.data.id}`)
   } catch (e: any) {
     error.value = e.response?.data?.error || 'Failed to create course'
   } finally {
