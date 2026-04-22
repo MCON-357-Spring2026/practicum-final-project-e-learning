@@ -1,6 +1,8 @@
 package ControllerTests;
 
 import com.elearning.controller.UserController;
+import com.elearning.dto.ProfileDTO;
+import com.elearning.dto.UserDTO;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -16,10 +18,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,19 +45,22 @@ public class UserControllerTest {
     @Test
     void getAllUsers_ShouldReturnList() {
         when(userService.getAll()).thenReturn(Arrays.asList(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<List<User>> response = userController.getAllUsers();
+        ResponseEntity<List<UserDTO>> response = userController.getAllUsers();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
+        assertEquals("Alice", response.getBody().get(0).getFirstName());
         verify(userService, times(1)).getAll();
     }
 
     @Test
     void getUserById_WhenExists_ShouldReturnUser() {
         when(userService.getById("u1")).thenReturn(Optional.of(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<User> response = userController.getUserById("u1");
+        ResponseEntity<UserDTO> response = userController.getUserById("u1");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Alice", response.getBody().getFirstName());
@@ -68,7 +70,7 @@ public class UserControllerTest {
     void getUserById_WhenNotFound_ShouldReturn404() {
         when(userService.getById("999")).thenReturn(Optional.empty());
 
-        ResponseEntity<User> response = userController.getUserById("999");
+        ResponseEntity<UserDTO> response = userController.getUserById("999");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -76,18 +78,19 @@ public class UserControllerTest {
     @Test
     void getUserByUsername_WhenExists_ShouldReturnUser() {
         when(userService.getByUsername("alice1")).thenReturn(Optional.of(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<User> response = userController.getUserByUsername("alice1");
+        ResponseEntity<UserDTO> response = userController.getUserByUsername("alice1");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("alice1", response.getBody().getUsername());
+        assertEquals("Alice", response.getBody().getFirstName());
     }
 
     @Test
     void getUserByUsername_WhenNotFound_ShouldReturn404() {
         when(userService.getByUsername("unknown")).thenReturn(Optional.empty());
 
-        ResponseEntity<User> response = userController.getUserByUsername("unknown");
+        ResponseEntity<UserDTO> response = userController.getUserByUsername("unknown");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -95,8 +98,9 @@ public class UserControllerTest {
     @Test
     void getUsersByRole_ShouldReturnList() {
         when(userService.getByRole(Role.STUDENT)).thenReturn(List.of(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<List<User>> response = userController.getUsersByRole(Role.STUDENT);
+        ResponseEntity<List<UserDTO>> response = userController.getUsersByRole(Role.STUDENT);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
@@ -105,11 +109,12 @@ public class UserControllerTest {
     @Test
     void createUser_ShouldReturn201() {
         when(userService.create(any(User.class))).thenReturn(testUser);
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
         ResponseEntity<?> response = userController.createUser(testUser);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertInstanceOf(User.class, response.getBody());
+        assertInstanceOf(UserDTO.class, response.getBody());
     }
 
     @Test
@@ -133,10 +138,12 @@ public class UserControllerTest {
     @Test
     void updateUser_WhenExists_ShouldReturnUpdated() {
         when(userService.update(eq("u1"), any(User.class))).thenReturn(Optional.of(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
         ResponseEntity<?> response = userController.updateUser("u1", testUser);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertInstanceOf(UserDTO.class, response.getBody());
     }
 
     @Test
@@ -160,10 +167,12 @@ public class UserControllerTest {
     @Test
     void replaceUser_WhenExists_ShouldReturnReplaced() {
         when(userService.replace(eq("u1"), any(User.class))).thenReturn(Optional.of(testUser));
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
         ResponseEntity<?> response = userController.replaceUser("u1", testUser);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertInstanceOf(UserDTO.class, response.getBody());
     }
 
     @Test
@@ -191,5 +200,29 @@ public class UserControllerTest {
         ResponseEntity<Void> response = userController.deleteUser("999");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void getUserProfile_WhenExists_ShouldReturnProfile() {
+        when(userService.getById("u1")).thenReturn(Optional.of(testUser));
+
+        ResponseEntity<ProfileDTO> response = userController.getUserProfile("u1");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("alice1", response.getBody().getUsername());
+        assertEquals(Role.STUDENT, response.getBody().getRole());
+        verify(userService, times(1)).getById("u1");
+    }
+
+    @Test
+    void getUserProfile_WhenNotFound_ShouldReturn404() {
+        when(userService.getById("999")).thenReturn(Optional.empty());
+
+        ResponseEntity<ProfileDTO> response = userController.getUserProfile("999");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(userService, times(1)).getById("999");
     }
 }

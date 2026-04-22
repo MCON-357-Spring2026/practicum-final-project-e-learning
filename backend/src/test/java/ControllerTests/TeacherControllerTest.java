@@ -6,6 +6,7 @@ import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
 import com.elearning.model.Teacher;
 import com.elearning.model.User;
+import com.elearning.security.AuthenticatedUser;
 import com.elearning.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,6 +37,8 @@ public class TeacherControllerTest {
 
     private Teacher testTeacher;
     private HomeAddress testAddress;
+    private Authentication adminAuth;
+    private Authentication studentAuth;
 
     @BeforeEach
     void setUp() {
@@ -42,16 +46,26 @@ public class TeacherControllerTest {
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
                 "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
         testTeacher.setId("t1");
+
+        AuthenticatedUser adminPrincipal = new AuthenticatedUser("a1", "admin", "ADMIN");
+        adminAuth = new UsernamePasswordAuthenticationToken(
+                adminPrincipal, null, List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
+        AuthenticatedUser studentPrincipal = new AuthenticatedUser("s1", "student", "STUDENT");
+        studentAuth = new UsernamePasswordAuthenticationToken(
+                studentPrincipal, null, List.of(new SimpleGrantedAuthority("ROLE_STUDENT")));
     }
 
     @Test
     void getAllTeachers_ShouldReturnList() {
         when(userService.getAllTeachers()).thenReturn(List.of(testTeacher));
+        when(userService.buildCourseMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<List<User>> response = teacherController.getAllTeachers();
+        ResponseEntity<?> response = teacherController.getAllTeachers(studentAuth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
+        assertInstanceOf(List.class, response.getBody());
+        assertEquals(1, ((List<?>) response.getBody()).size());
         verify(userService, times(1)).getAllTeachers();
     }
 
@@ -84,18 +98,20 @@ public class TeacherControllerTest {
     @Test
     void getTeacherById_WhenExists_ShouldReturnTeacher() {
         when(userService.getById("t1")).thenReturn(Optional.of(testTeacher));
+        when(userService.buildCourseMap(any())).thenReturn(Collections.emptyMap());
+        when(userService.buildEnrollmentMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<Teacher> response = teacherController.getTeacherById("t1");
+        ResponseEntity<?> response = teacherController.getTeacherById("t1", adminAuth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Dr. Jane", response.getBody().getFirstName());
+        assertNotNull(response.getBody());
     }
 
     @Test
     void getTeacherById_WhenNotFound_ShouldReturn404() {
         when(userService.getById("999")).thenReturn(Optional.empty());
 
-        ResponseEntity<Teacher> response = teacherController.getTeacherById("999");
+        ResponseEntity<?> response = teacherController.getTeacherById("999", adminAuth);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -106,7 +122,7 @@ public class TeacherControllerTest {
                 "alice1", "pass", null, Role.STUDENT);
         when(userService.getById("u1")).thenReturn(Optional.of(plainUser));
 
-        ResponseEntity<Teacher> response = teacherController.getTeacherById("u1");
+        ResponseEntity<?> response = teacherController.getTeacherById("u1", adminAuth);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -114,11 +130,13 @@ public class TeacherControllerTest {
     @Test
     void getTeachersByDepartment_ShouldReturnList() {
         when(userService.getTeachersByDepartment("Computer Science")).thenReturn(List.of(testTeacher));
+        when(userService.buildCourseMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<List<Teacher>> response = teacherController.getTeachersByDepartment("Computer Science");
+        ResponseEntity<?> response = teacherController.getTeachersByDepartment("Computer Science", studentAuth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
+        assertInstanceOf(List.class, response.getBody());
+        assertEquals(1, ((List<?>) response.getBody()).size());
     }
 
     @Test
