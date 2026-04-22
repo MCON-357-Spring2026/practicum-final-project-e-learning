@@ -8,6 +8,11 @@ import com.elearning.repository.CourseRepository;
 import com.elearning.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for managing {@link Quiz} entities.
+ * Handles CRUD operations and maintains bidirectional references
+ * between quizzes and their parent courses.
+ */
 @Service
 public class QuizService implements ServiceInterface<Quiz> {
 
@@ -19,19 +24,46 @@ public class QuizService implements ServiceInterface<Quiz> {
         this.courseRepo = courseRepo;
     }
 
+    /** {@inheritDoc} */
     public List<Quiz> getAll() {
         return repo.findAll();
     }
 
+    /** {@inheritDoc} */
     public Optional<Quiz> getById(String id) {
         return repo.findById(id);
     }
 
+    /**
+     * Finds all quizzes belonging to a given course.
+     *
+     * @param courseId the course ID
+     * @return list of quizzes for the course
+     */
     public List<Quiz> getByCourseId(String courseId) {
         return repo.getByCourseId(courseId);
     }
 
+    /**
+     * Creates a quiz and adds its ID to the parent course's quiz list.
+     *
+     * @param quiz the quiz to create
+     * @return the saved quiz
+     * @throws IllegalArgumentException if the specified course is not found
+     */
     public Quiz create(Quiz quiz) {
+        if (quiz.getQuestions() == null || quiz.getQuestions().isEmpty()) {
+            throw new IllegalArgumentException("A quiz must have at least one question.");
+        }
+        for (int i = 0; i < quiz.getQuestions().size(); i++) {
+            var q = quiz.getQuestions().get(i);
+            if (q.getOptions() == null || q.getOptions().length < 1) {
+                throw new IllegalArgumentException("Question " + (i + 1) + " must have at least one choice.");
+            }
+            if (q.getCorrectOptionIndex() < 0 || q.getCorrectOptionIndex() >= q.getOptions().length) {
+                throw new IllegalArgumentException("Question " + (i + 1) + " must have a valid correct answer selected.");
+            }
+        }
         if (quiz.getCourseId() != null) {
             Optional<Course> course = courseRepo.findById(quiz.getCourseId());
             if (course.isEmpty()) {
@@ -46,6 +78,7 @@ public class QuizService implements ServiceInterface<Quiz> {
         return repo.save(quiz);
     }
 
+    /** {@inheritDoc} */
     public Optional<Quiz> update(String id, Quiz quiz) {
         Optional<Quiz> existingQuiz = repo.findById(id);
         if (existingQuiz.isPresent()) {
@@ -62,6 +95,7 @@ public class QuizService implements ServiceInterface<Quiz> {
         }
     }
 
+    /** {@inheritDoc} */
     public Optional<Quiz> replace(String id, Quiz quiz) {
         if (repo.existsById(id)) {
             quiz.setId(id);
@@ -71,6 +105,12 @@ public class QuizService implements ServiceInterface<Quiz> {
         }
     }
 
+    /**
+     * Deletes a quiz and removes its ID from the parent course's quiz list.
+     *
+     * @param id the quiz ID to delete
+     * @return true if the quiz was deleted, false if not found
+     */
     public boolean delete(String id) {
         Optional<Quiz> quiz = repo.findById(id);
         if (quiz.isPresent()) {

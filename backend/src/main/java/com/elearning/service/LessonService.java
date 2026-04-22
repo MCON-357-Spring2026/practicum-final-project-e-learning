@@ -2,12 +2,18 @@ package com.elearning.service;
 
 import java.util.List;
 import java.util.Optional;
+import com.elearning.dto.LessonPreviewDTO;
 import com.elearning.model.Course;
 import com.elearning.model.Lesson;
 import com.elearning.repository.CourseRepository;
 import com.elearning.repository.LessonRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for managing {@link Lesson} entities.
+ * Handles CRUD operations and maintains bidirectional references
+ * between lessons and their parent courses.
+ */
 @Service
 public class LessonService implements ServiceInterface<Lesson> {
 
@@ -19,14 +25,23 @@ public class LessonService implements ServiceInterface<Lesson> {
         this.courseRepo = courseRepo;
     }
 
+    /** {@inheritDoc} */
     public List<Lesson> getAll() {
         return repo.findAll();
     }
 
+    /** {@inheritDoc} */
     public Optional<Lesson> getById(String id) {
         return repo.findById(id);
     }
 
+    /**
+     * Creates a lesson and adds its ID to the parent course's lesson list.
+     *
+     * @param lesson the lesson to create
+     * @return the saved lesson
+     * @throws IllegalArgumentException if the specified course is not found
+     */
     public Lesson create(Lesson lesson) {
         if (lesson.getCourseId() != null) {
             Optional<Course> course = courseRepo.findById(lesson.getCourseId());
@@ -42,6 +57,7 @@ public class LessonService implements ServiceInterface<Lesson> {
         return repo.save(lesson);
     }
 
+    /** {@inheritDoc} */
     public Optional<Lesson> update(String id, Lesson lesson) {
         Optional<Lesson> existingLesson = repo.findById(id);
         if (existingLesson.isPresent()) {
@@ -64,6 +80,7 @@ public class LessonService implements ServiceInterface<Lesson> {
         }
     }
 
+    /** {@inheritDoc} */
     public Optional<Lesson> replace(String id, Lesson lesson) {
         if (repo.existsById(id)) {
             lesson.setId(id);
@@ -73,6 +90,12 @@ public class LessonService implements ServiceInterface<Lesson> {
         }
     }
 
+    /**
+     * Deletes a lesson and removes its ID from the parent course's lesson list.
+     *
+     * @param id the lesson ID to delete
+     * @return true if the lesson was deleted, false if not found
+     */
     public boolean delete(String id) {
         Optional<Lesson> lesson = repo.findById(id);
         if (lesson.isPresent()) {
@@ -90,6 +113,12 @@ public class LessonService implements ServiceInterface<Lesson> {
         } else {
             return false;
         }
+    }
+
+    public List<LessonPreviewDTO> getPreviewsByCourseId(String courseId) {
+        return repo.getByCourseId(courseId).stream()
+                .map(LessonPreviewDTO::new)
+                .toList();
     }
 
 }

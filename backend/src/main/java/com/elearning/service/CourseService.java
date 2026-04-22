@@ -10,6 +10,11 @@ import com.elearning.repository.PersonRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for managing {@link Course} entities.
+ * Handles CRUD operations and maintains bidirectional references
+ * between courses and their instructors.
+ */
 @Service
 public class CourseService implements ServiceInterface<Course> {
     
@@ -21,16 +26,22 @@ public class CourseService implements ServiceInterface<Course> {
         this.personRepo = personRepo;
     }
 
+    /** {@inheritDoc} */
     public List<Course> getAll() {
-        // Implementation here
         return repo.findAll();
     }
 
+    /** {@inheritDoc} */
     public Optional<Course> getById(String id) {
-        // Implementation here
         return repo.findById(id);
     }
 
+    /**
+     * Finds all courses taught by a given instructor.
+     *
+     * @param instructorId the instructor's ID
+     * @return list of courses for the instructor
+     */
     public List<Course> getByInstructorId(String instructorId) {
         return repo.getByInstructorId(instructorId);
     }
@@ -38,6 +49,11 @@ public class CourseService implements ServiceInterface<Course> {
     /**
      * Creates a course after verifying the instructorId references an existing Teacher.
      * Also adds the new course's ID to the Teacher's courseIds list.
+     *
+     * @param course the course to create
+     * @return the saved course
+     * @throws DuplicateKeyException     if a course with the same department and number exists
+     * @throws IllegalArgumentException if the instructor is not found or is not a teacher
      */
     public Course create(Course course) throws DuplicateKeyException {
         // Verify instructorId references a valid Teacher
@@ -70,6 +86,14 @@ public class CourseService implements ServiceInterface<Course> {
         return savedCourse;
     }
 
+    /**
+     * Partially updates an existing course's fields.
+     *
+     * @param id     the course ID
+     * @param course the course containing updated fields
+     * @return an Optional containing the updated course if found
+     * @throws DuplicateKeyException if the update causes a duplicate key violation
+     */
     public Optional<Course> update(String id, Course course) throws DuplicateKeyException {
         Optional<Course> existingCourse = repo.findById(id);
         if (existingCourse.isPresent()) {
@@ -107,6 +131,14 @@ public class CourseService implements ServiceInterface<Course> {
         }
     }
 
+    /**
+     * Fully replaces an existing course.
+     *
+     * @param id     the course ID
+     * @param course the replacement course
+     * @return an Optional containing the replaced course if found
+     * @throws DuplicateKeyException if the replacement causes a duplicate key violation
+     */
     public Optional<Course> replace(String id, Course course) throws DuplicateKeyException {
         if (repo.existsById(id)) {
             course.setId(id);
@@ -117,6 +149,9 @@ public class CourseService implements ServiceInterface<Course> {
     }
     /**
      * Deletes a course and removes its ID from the instructor's courseIds list.
+     *
+     * @param id the course ID to delete
+     * @return true if the course was deleted, false if not found
      */
     public boolean delete(String id) {
         Optional<Course> courseOpt = repo.findById(id);
