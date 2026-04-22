@@ -91,7 +91,7 @@ public class LessonServiceTest {
     @Test
     void create_ShouldSaveAndReturnLesson() {
         // Arrange
-        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101);
+        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
         course.setId("course1");
         when(courseRepository.findById("course1")).thenReturn(Optional.of(course));
         when(lessonRepository.save(any(Lesson.class))).thenReturn(testLesson);
@@ -204,7 +204,7 @@ public class LessonServiceTest {
     @Test
     void delete_WhenLessonExists_ShouldCascadeRemoveFromCourse() {
         // Arrange
-        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101);
+        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
         course.setId("course1");
         course.addLessonID("1");
 

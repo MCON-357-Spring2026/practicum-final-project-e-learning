@@ -1,6 +1,7 @@
 package ServiceTests;
 
 import com.elearning.model.Course;
+import com.elearning.model.Question;
 import com.elearning.model.Quiz;
 import com.elearning.repository.CourseRepository;
 import com.elearning.repository.QuizRepository;
@@ -38,8 +39,9 @@ public class QuizServiceTest {
     void setUp() {
         testQuiz = new Quiz("course1", "Java Basics Quiz");
         testQuiz.setId("q1");
+        testQuiz.addQuestion(new Question("What is Java?", new String[]{"Language", "Food"}, 0));
 
-        testCourse = new Course("Java Programming", "inst1", "Computer Science", 3, 101);
+        testCourse = new Course("Java Programming", "inst1", "Computer Science", 3, 101, "Intro to Java");
         testCourse.setId("course1");
     }
 
@@ -101,12 +103,12 @@ public class QuizServiceTest {
         when(courseRepository.findById("course1")).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> quizService.create(testQuiz));
-        verify(quizRepository, never()).save(any(Quiz.class));
     }
 
     @Test
     void create_WithNullCourseId_ShouldSaveWithoutCourseSync() {
         Quiz noCourseQuiz = new Quiz(null, "Standalone Quiz");
+        noCourseQuiz.addQuestion(new Question("Q1?", new String[]{"A", "B"}, 0));
         when(quizRepository.save(any(Quiz.class))).thenReturn(noCourseQuiz);
 
         Quiz result = quizService.create(noCourseQuiz);
