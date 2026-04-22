@@ -5,6 +5,7 @@ import com.elearning.enums.Role;
 import com.elearning.model.*;
 import com.elearning.repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,15 +24,17 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final QuizRepository quizRepo;
     private final EnrollmentRepository enrollmentRepo;
     private final PersonRepository personRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(CourseRepository courseRepo, LessonRepository lessonRepo,
                           QuizRepository quizRepo, EnrollmentRepository enrollmentRepo,
-                          PersonRepository personRepo) {
+                          PersonRepository personRepo, PasswordEncoder passwordEncoder) {
         this.courseRepo = courseRepo;
         this.lessonRepo = lessonRepo;
         this.quizRepo = quizRepo;
         this.enrollmentRepo = enrollmentRepo;
         this.personRepo = personRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -52,20 +55,20 @@ public class DatabaseSeeder implements CommandLineRunner {
         // ========== USERS (students and instructors) - created FIRST for referential integrity ==========
         User student1 = new User("Alice", "Johnson", new GregorianCalendar(2000, 5, 15).getTime(),
                 Gender.FEMALE, new HomeAddress("123 Main St", "Springfield", "IL", "62704"),
-                "student1", "password123", null, Role.STUDENT);
+                "student1", passwordEncoder.encode("password123"), null, Role.STUDENT);
         User student2 = new User("Bob", "Smith", new GregorianCalendar(1999, 8, 22).getTime(),
                 Gender.MALE, new HomeAddress("456 Oak Ave", "Chicago", "IL", "60601"),
-                "student2", "password456", null, Role.STUDENT);
+                "student2", passwordEncoder.encode("password456"), null, Role.STUDENT);
 
         Teacher instructor1 = new Teacher("Dr. Jane", "Doe", new GregorianCalendar(1980, 3, 10).getTime(),
                 Gender.FEMALE, new HomeAddress("789 Elm St", "Urbana", "IL", "61801"),
-                "instructor1", "instrpass1", null, Role.TEACHER, "Computer Science");
+                "instructor1", passwordEncoder.encode("instrpass1"), null, Role.TEACHER, "Computer Science");
         Teacher instructor2 = new Teacher("Prof. John", "Williams", new GregorianCalendar(1975, 11, 5).getTime(),
                 Gender.MALE, new HomeAddress("321 Pine Rd", "Champaign", "IL", "61820"),
-                "instructor2", "instrpass2", null, Role.TEACHER, "Computer Science");
+                "instructor2", passwordEncoder.encode("instrpass2"), null, Role.TEACHER, "Computer Science");
         Teacher instructor3 = new Teacher("Dr. Sarah", "Lee", new GregorianCalendar(1982, 7, 18).getTime(),
                 Gender.FEMALE, new HomeAddress("654 Maple Dr", "Evanston", "IL", "60201"),
-                "instructor3", "instrpass3", null, Role.TEACHER, "Mathematics");
+                "instructor3", passwordEncoder.encode("instrpass3"), null, Role.TEACHER, "Mathematics");
 
         student1 = personRepo.save(student1);
         student2 = personRepo.save(student2);
@@ -74,23 +77,18 @@ public class DatabaseSeeder implements CommandLineRunner {
         instructor3 = personRepo.save(instructor3);
 
         // ========== COURSES (using real instructor IDs) ==========
-        Course javaCourse = new Course("Introduction to Java", instructor1.getId(), "Computer Science", 3, 101);
-        javaCourse.setDescription("Learn the fundamentals of Java programming including OOP, data structures, and algorithms.");
+        Course javaCourse = new Course("Introduction to Java", instructor1.getId(), "Computer Science", 3, 101, "Learn the fundamentals of Java programming including OOP, data structures, and algorithms.");
         javaCourse.setImage("https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg");
 
-        Course webDevCourse = new Course("Web Development", instructor2.getId(), "Computer Science", 4, 201);
-        webDevCourse.setDescription("Full-stack web development with HTML, CSS, JavaScript, and modern frameworks.");
+        Course webDevCourse = new Course("Web Development", instructor2.getId(), "Computer Science", 4, 201, "Full-stack web development with HTML, CSS, JavaScript, and modern frameworks.");
         webDevCourse.setImage("https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg");
 
-        Course dbCourse = new Course("Database Systems", instructor1.getId(), "Computer Science", 3, 301);
-        dbCourse.setDescription("Relational and NoSQL database design, SQL, normalization, and query optimization.");
+        Course dbCourse = new Course("Database Systems", instructor1.getId(), "Computer Science", 3, 301, "Relational and NoSQL database design, SQL, normalization, and query optimization.");
         dbCourse.setImage("https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg");
 
-        Course mathCourse = new Course("Calculus I", instructor3.getId(), "Mathematics", 4, 101);
-        mathCourse.setDescription("Limits, derivatives, integrals, and the fundamental theorem of calculus.");
+        Course mathCourse = new Course("Calculus I", instructor3.getId(), "Mathematics", 4, 101, "Limits, derivatives, integrals, and the fundamental theorem of calculus.");
 
-        Course physicsCourse = new Course("Physics I", instructor3.getId(), "Physics", 4, 101);
-        physicsCourse.setDescription("Classical mechanics, kinematics, Newton's laws, energy, and momentum.");
+        Course physicsCourse = new Course("Physics I", instructor3.getId(), "Physics", 4, 101, "Classical mechanics, kinematics, Newton's laws, energy, and momentum.");
 
         // Save courses first to get IDs
         javaCourse = courseRepo.save(javaCourse);
