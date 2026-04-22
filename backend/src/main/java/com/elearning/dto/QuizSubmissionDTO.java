@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 
+/**
+ * Data transfer object for quiz submission requests.
+ * Contains the enrollment ID and the student's selected answer indices.
+ */
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
