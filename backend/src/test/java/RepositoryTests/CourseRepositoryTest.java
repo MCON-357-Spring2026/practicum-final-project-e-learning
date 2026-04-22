@@ -26,7 +26,7 @@ public class CourseRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101);
+        testCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
         testCourse.setId("1");
     }
 
@@ -35,7 +35,7 @@ public class CourseRepositoryTest {
         // Arrange
         List<Course> courses = Arrays.asList(
             testCourse,
-            new Course("Data Structures", "Dr. Johnson", "Computer Science", 4, 102)
+            new Course("Data Structures", "Dr. Johnson", "Computer Science", 4, 102, "Learn data structures")
         );
         when(courseRepository.findAll()).thenReturn(courses);
 
