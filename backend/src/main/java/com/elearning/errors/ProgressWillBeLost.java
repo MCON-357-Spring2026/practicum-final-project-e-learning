@@ -1,7 +1,13 @@
 package com.elearning.errors;
 
+/**
+ * Thrown to warn that an action will cause existing progress to be lost.
+ */
 public class ProgressWillBeLost extends RuntimeException {
     
+    /**
+     * @param message descriptive error message
+     */
     public ProgressWillBeLost(String message) {
         super(message);
     }
