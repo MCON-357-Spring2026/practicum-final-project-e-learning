@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of Spring Security's {@link UserDetailsService} that loads
+ * user credentials from the MongoDB {@link PersonRepository}.
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -19,6 +23,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.personRepository = personRepository;
     }
 
+    /**
+     * Loads a user by username for authentication.
+     *
+     * @param username the username to look up
+     * @return the Spring Security {@link UserDetails}
+     * @throws UsernameNotFoundException if no user exists with the given username
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = personRepository.findUserByUsername(username)
