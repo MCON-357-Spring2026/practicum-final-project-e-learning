@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { courseApi, type Course } from '../api/courseApi'
+import { courseApi, type Course } from '@/api/courseApi'
 
 export const useCourseStore = defineStore('course', () => {
   const courses = ref<Course[]>([])

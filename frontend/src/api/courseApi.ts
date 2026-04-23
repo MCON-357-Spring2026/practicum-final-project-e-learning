@@ -13,6 +13,15 @@ export interface Course {
   image: string
 }
 
+export interface CreateCoursePayload {
+  title: string
+  description: string
+  department: string
+  courseNum: number
+  credits: number
+  image: string
+}
+
 export const courseApi = {
   getAll() {
     return axiosClient.get<Course[]>('/courses/')
@@ -26,7 +35,7 @@ export const courseApi = {
     return axiosClient.get<Course[]>(`/courses/instructor/${instructorId}`)
   },
 
-  create(course: Omit<Course, 'id'>) {
+  create(course: CreateCoursePayload) {
     return axiosClient.post<Course>('/courses/', course)
   },
 

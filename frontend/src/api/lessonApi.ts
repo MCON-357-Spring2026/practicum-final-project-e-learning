@@ -5,7 +5,16 @@ export interface Lesson {
   title: string
   description: string
   minutes: number
+  text: string
+  media: string[]
   resources: string[]
+}
+
+export interface LessonPreview {
+  id: string
+  title: string
+  description: string
+  minutes: number
 }
 
 export const lessonApi = {
@@ -31,5 +40,9 @@ export const lessonApi = {
 
   delete(id: string) {
     return axiosClient.delete(`/lessons/${id}`)
+  },
+
+  getPreviewsByCourseId(courseId: string) {
+    return axiosClient.get<LessonPreview[]>(`/lessons/course/${courseId}/previews`)
   }
 }

@@ -16,16 +16,4 @@ axiosClient.interceptors.request.use((config) => {
   return config
 })
 
-// Handle 401 responses globally
-axiosClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      window.location.href = '/login'
-    }
-    return Promise.reject(error)
-  }
-)
-
 export default axiosClient

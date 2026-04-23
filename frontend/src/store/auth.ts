@@ -1,10 +1,29 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { authApi } from '../api/authApi'
+import { authApi } from '@/api/authApi'
+import type { RegisterPayload } from '@/api/authApi'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const user = ref<{ id: string; username: string; role: string } | null>(null)
+
+  // Restore user from JWT payload on init
+  if (token.value) {
+    try {
+      const payload = JSON.parse(atob(token.value.split('.')[1]))
+      const expiry = payload.exp * 1000 // exp is in seconds
+      if (Date.now() >= expiry) {
+        // Token expired — clear auth
+        token.value = null
+        localStorage.removeItem('token')
+      } else {
+        user.value = { id: payload.userId, username: payload.sub, role: payload.role }
+      }
+    } catch {
+      token.value = null
+      localStorage.removeItem('token')
+    }
+  }
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -25,8 +44,8 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = response.data.user
   }
 
-  async function register(username: string, password: string, name: string) {
-    const response = await authApi.register(username, password, name)
+  async function register(payload: RegisterPayload) {
+    const response = await authApi.register(payload)
     setToken(response.data.token)
     user.value = response.data.user
   }

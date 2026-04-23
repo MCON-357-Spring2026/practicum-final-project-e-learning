@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Courses from '@/pages/courses/index.vue'
 import CourseDetails from '@/pages/courses/[id]/CourseDetails.vue'
+import CoursePreview from '@/pages/courses/[id]/preview.vue'
 import EditCourse from '@/pages/courses/[id]/EditCourse.vue'
 import CreateCourse from '@/pages/courses/CreateCourse.vue'
 import Login from '@/pages/Login.vue'
@@ -21,12 +22,16 @@ import CourseLessons from '@/pages/courses/[id]/quizes/index.vue'
 import ResourceNotFound from '@/pages/ResourceNotFound.vue'
 import Unauthorized from '@/pages/Unauthorized.vue'
 import Profile from '@/pages/Profile.vue'
+import Messages from '@/pages/messages/index.vue'
+import MessagesSent from '@/pages/messages/sent.vue'
+import MessageDetail from '@/pages/messages/[id]/index.vue'
 
 const routes = [
   { path: '/', redirect: '/courses' },
   { path: '/courses', name: 'Courses', component: Courses },
   { path: '/courses/create', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true } },
   { path: '/courses/:id', name: 'CourseDetails', component: CourseDetails, props: true },
+  { path: '/courses/:id/preview', name: 'CoursePreview', component: CoursePreview, props: true },
   { path: '/courses/:id/edit', name: 'EditCourse', component: EditCourse, props: true, meta: { requiresAuth: true } },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
@@ -40,9 +45,12 @@ const routes = [
   { path: '/courses/:courseId/quiz/:quizId', name: 'QuizView', component: QuizView, props: true },
   { path: '/courses/:courseId/quiz/:quizId/edit', name: 'EditQuiz', component: EditQuiz, props: true, meta: { requiresAuth: true } },
   { path: '/teachers', name: 'Teachers', component: Teachers },
-  { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true, meta: { requiresAuth: true } },
+  { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true },
   { path: '/teachers/:id/preview', name: 'TeacherPreview', component: TeacherPreview, props: true },
   { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
+  { path: '/messages', name: 'Messages', component: Messages, meta: { requiresAuth: true } },
+  { path: '/messages/sent', name: 'MessagesSent', component: MessagesSent, meta: { requiresAuth: true } },
+  { path: '/messages/:id', name: 'MessageDetail', component: MessageDetail, props: true, meta: { requiresAuth: true } },
   { path: '/unauthorized', name: 'Unauthorized', component: Unauthorized },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: ResourceNotFound }
 ]
