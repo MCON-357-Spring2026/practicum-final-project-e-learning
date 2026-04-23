@@ -5,6 +5,8 @@ import com.elearning.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,5 +96,13 @@ public class MessageService implements ServiceInterface<Message> {
 
     public List<Message> getByUserId(String userId) {
         return repo.findBySenderIdOrReceiverId(userId);
+    }
+
+    public List<Message> getConversation(String personId1, String personId2) {
+        List<Message> combined = new ArrayList<>();
+        combined.addAll(repo.findBySenderIdAndRecipientId(personId1, personId2));
+        combined.addAll(repo.findBySenderIdAndRecipientId(personId2, personId1));
+        combined.sort(Comparator.comparing(Message::getSentAt).reversed());
+        return combined;
     }
 }
