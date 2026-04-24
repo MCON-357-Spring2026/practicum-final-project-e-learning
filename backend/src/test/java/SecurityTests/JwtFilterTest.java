@@ -44,7 +44,7 @@ public class JwtFilterTest {
         String token = jwtUtil.generateToken("testuser", "user123", "STUDENT");
         request.addHeader("Authorization", "Bearer " + token);
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertEquals("testuser", SecurityContextHolder.getContext().getAuthentication().getName());
@@ -53,7 +53,7 @@ public class JwtFilterTest {
 
     @Test
     void doFilter_WithNoAuthHeader_ShouldNotSetAuthentication() throws ServletException, IOException {
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain, times(1)).doFilter(request, response);
@@ -63,7 +63,7 @@ public class JwtFilterTest {
     void doFilter_WithInvalidToken_ShouldNotSetAuthentication() throws ServletException, IOException {
         request.addHeader("Authorization", "Bearer invalid.token.value");
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain, times(1)).doFilter(request, response);
@@ -73,7 +73,7 @@ public class JwtFilterTest {
     void doFilter_WithNonBearerHeader_ShouldNotSetAuthentication() throws ServletException, IOException {
         request.addHeader("Authorization", "Basic dXNlcjpwYXNz");
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain, times(1)).doFilter(request, response);
@@ -85,7 +85,7 @@ public class JwtFilterTest {
         String expiredToken = expiredJwtUtil.generateToken("testuser", "user123", "STUDENT");
         request.addHeader("Authorization", "Bearer " + expiredToken);
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain, times(1)).doFilter(request, response);
@@ -96,7 +96,7 @@ public class JwtFilterTest {
         String token = jwtUtil.generateToken("teacher1", "t1", "TEACHER");
         request.addHeader("Authorization", "Bearer " + token);
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         var auth = SecurityContextHolder.getContext().getAuthentication();
         assertNotNull(auth);
@@ -109,7 +109,7 @@ public class JwtFilterTest {
         // Even with a bad token, the filter chain must continue
         request.addHeader("Authorization", "Bearer garbage");
 
-        jwtFilter.doFilterInternal(request, response, filterChain);
+        jwtFilter.doFilter(request, response, filterChain);
 
         verify(filterChain, times(1)).doFilter(request, response);
     }
