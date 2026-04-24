@@ -1,0 +1,56 @@
+package com.elearning.model;
+
+import com.elearning.enums.Gender;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
+
+/**
+ * Base entity representing a person in the system.
+ * Stored in the "people" MongoDB collection. Serves as the parent class for
+ * {@link User} and {@link Teacher}.
+ */
+@Getter @Setter 
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "people")
+public class Person {
+
+    @Id
+    private String id;
+    private String firstName;
+    private String lastName;
+    private Date dateOfBirth;
+    private Gender gender;
+    private HomeAddress address;
+
+    /**
+     * Constructs a new Person with the given personal details.
+     *
+     * @param fname   first name
+     * @param lname   last name
+     * @param dob     date of birth
+     * @param gender  gender
+     * @param address home address
+     */
+    public Person(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return id != null && id.equals(person.id);
+    }
+}
