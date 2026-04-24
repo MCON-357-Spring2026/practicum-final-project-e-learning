@@ -143,12 +143,12 @@ public class MessageController {
     /**
      * Retrieves all messages received by a given user.
      *
-     * @param recipientId the recipient's ID
+     * @param receiverId the receiver's ID
      * @return 200 with list of messages
      */
-    @GetMapping("/recipient/{recipientId}")
-    public ResponseEntity<List<MessageDTO>> getByRecipientId(@PathVariable String recipientId) {
-        return ResponseEntity.ok(toDTOList(messageService.getByRecipientId(recipientId)));
+    @GetMapping("/receiver/{receiverId}")
+    public ResponseEntity<List<MessageDTO>> getByReceiverId(@PathVariable String receiverId) {
+        return ResponseEntity.ok(toDTOList(messageService.getByReceiverId(receiverId)));
     }
 
     /**
@@ -163,16 +163,16 @@ public class MessageController {
     }
 
     /**
-     * Retrieves all messages between a specific sender and recipient.
+     * Retrieves all messages between a specific sender and receiver.
      *
-     * @param senderId    the sender's ID
-     * @param recipientId the recipient's ID
+     * @param senderId   the sender's ID
+     * @param receiverId the receiver's ID
      * @return 200 with list of messages
      */
     @GetMapping("/conversation")
-    public ResponseEntity<List<MessageDTO>> getBySenderAndRecipient(
-            @RequestParam String senderId, @RequestParam String recipientId) {
-        return ResponseEntity.ok(toDTOList(messageService.getBySenderAndRecipient(senderId, recipientId)));
+    public ResponseEntity<List<MessageDTO>> getBySenderAndReceiver(
+            @RequestParam String senderId, @RequestParam String receiverId) {
+        return ResponseEntity.ok(toDTOList(messageService.getBySenderAndReceiver(senderId, receiverId)));
     }
 
     /**

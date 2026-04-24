@@ -44,7 +44,7 @@ onMounted(async () => {
     return
   }
   try {
-    const { data } = await messageApi.getByRecipientId(authStore.user.id)
+    const { data } = await messageApi.getByReceiverId(authStore.user.id)
     messages.value = data.sort(
       (a: MessagePreviewData, b: MessagePreviewData) =>
         new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()

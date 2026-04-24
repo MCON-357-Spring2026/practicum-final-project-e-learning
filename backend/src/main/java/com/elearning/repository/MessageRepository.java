@@ -14,17 +14,17 @@ import org.springframework.data.mongodb.repository.Query;
  */
 public interface MessageRepository extends MongoRepository<Message, String> {
 
-    public List<Message> findByRecipientId(String recipientId);
+    public List<Message> findByReceiverId(String receiverId);
 
     public List<Message> findBySenderId(String senderId);
 
-    public List<Message> findByRecipientIdAndRead(String recipientId, boolean read);
+    public List<Message> findByReceiverIdAndRead(String receiverId, boolean read);
 
     public List<Message> findBySenderIdAndRead(String senderId, boolean read);
 
-    public List<Message> findBySenderIdAndRecipientId(String senderId, String recipientId);
+    public List<Message> findBySenderIdAndReceiverId(String senderId, String receiverId);
 
-    public List<Message> findByListOfIds(List<String> ids);
+    public List<Message> findByIdIn(List<String> ids);
 
     public List<Message> findBySentAt(LocalDateTime sentAt);
 

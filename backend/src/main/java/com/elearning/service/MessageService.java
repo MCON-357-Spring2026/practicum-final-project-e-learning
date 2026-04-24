@@ -74,16 +74,16 @@ public class MessageService implements ServiceInterface<Message> {
         return false;
     }
 
-    public List<Message> getByRecipientId(String recipientId) {
-        return repo.findByRecipientId(recipientId);
+    public List<Message> getByReceiverId(String receiverId) {
+        return repo.findByReceiverId(receiverId);
     }
 
     public List<Message> getBySenderId(String senderId) {
         return repo.findBySenderId(senderId);
     }
 
-    public List<Message> getBySenderAndRecipient(String senderId, String recipientId) {
-        return repo.findBySenderIdAndRecipientId(senderId, recipientId);
+    public List<Message> getBySenderAndReceiver(String senderId, String receiverId) {
+        return repo.findBySenderIdAndReceiverId(senderId, receiverId);
     }
 
     public List<Message> getSentBefore(LocalDateTime date) {
@@ -100,8 +100,8 @@ public class MessageService implements ServiceInterface<Message> {
 
     public List<Message> getConversation(String personId1, String personId2) {
         List<Message> combined = new ArrayList<>();
-        combined.addAll(repo.findBySenderIdAndRecipientId(personId1, personId2));
-        combined.addAll(repo.findBySenderIdAndRecipientId(personId2, personId1));
+        combined.addAll(repo.findBySenderIdAndReceiverId(personId1, personId2));
+        combined.addAll(repo.findBySenderIdAndReceiverId(personId2, personId1));
         combined.sort(Comparator.comparing(Message::getSentAt).reversed());
         return combined;
     }
