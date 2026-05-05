@@ -3,6 +3,7 @@
     <h1>Instructor Dashboard</h1>
     <div class="actions">
       <router-link to="/courses/create" class="btn">+ Create Course</router-link>
+      <router-link to="/dashboard" class="btn btn-secondary">View as Student</router-link>
     </div>
     <p v-if="loading">Loading your courses...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
@@ -50,6 +51,8 @@ onMounted(async () => {
 
 .actions {
   margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .btn {
@@ -59,6 +62,16 @@ onMounted(async () => {
   color: #fff;
   text-decoration: none;
   border-radius: 4px;
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: #e94560;
+  border: 1px solid #e94560;
+}
+
+.btn-secondary:hover {
+  background-color: #fef0f3;
 }
 
 .course-list {

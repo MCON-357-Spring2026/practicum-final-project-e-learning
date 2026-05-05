@@ -18,6 +18,8 @@ public interface MessageRepository extends MongoRepository<Message, String> {
 
     public List<Message> findBySenderId(String senderId);
 
+    public List<Message> findBySenderIdAndBlast(String senderId, boolean blast);
+
     public List<Message> findByReceiverIdAndRead(String receiverId, boolean read);
 
     public List<Message> findBySenderIdAndRead(String senderId, boolean read);

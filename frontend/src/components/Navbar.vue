@@ -8,6 +8,7 @@
       <router-link to="/courses">Courses</router-link>
       <template v-if="authStore.isAuthenticated">
         <router-link :to="dashboardRoute">Dashboard</router-link>
+        <router-link to="/messages">Messages</router-link>
         <router-link to="/profile">Profile</router-link>
         <button @click="handleLogout" class="btn-link">Logout</button>
       </template>

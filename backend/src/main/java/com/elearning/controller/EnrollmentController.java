@@ -8,9 +8,11 @@ import com.elearning.errors.QuizNotFoundException;
 import com.elearning.errors.StudentNotFoundException;
 import com.elearning.model.Grade;
 import com.elearning.model.Quiz;
+import com.elearning.security.AuthenticatedUser;
 import com.elearning.service.EnrollmentService;
 import com.elearning.service.QuizService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -68,6 +70,23 @@ public class EnrollmentController {
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<Enrollment>> getEnrollmentsByCourseId(@PathVariable String courseId) {
         return ResponseEntity.ok(enrollmentService.getByCourseId(courseId));
+    }
+
+    /**
+     * Retrieves all student IDs enrolled in a given course.
+     * Requires the requesting user to be a TEACHER or ADMIN.
+     *
+     * @param courseId the course ID
+     * @return 200 with list of student IDs
+     */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @GetMapping("/course/{courseId}/students")
+    public ResponseEntity<List<String>> getStudentIdsByCourseId(@PathVariable String courseId) {
+        List<Enrollment> enrollments = enrollmentService.getByCourseId(courseId);
+        List<String> studentIds = enrollments.stream()
+                .map(Enrollment::getStudentId)
+                .toList();
+        return ResponseEntity.ok(studentIds);
     }
 
     /**
@@ -168,6 +187,29 @@ public class EnrollmentController {
         } catch (EnrollmentNotFoundException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (QuizNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Marks a lesson as completed for the authenticated student in a course.
+     *
+     * @param courseId  the course ID
+     * @param lessonId  the lesson ID
+     * @return 200 with the updated enrollment, or 404/400 on error
+     */
+    @PatchMapping("/course/{courseId}/lesson/{lessonId}/complete")
+    public ResponseEntity<?> completeLesson(@PathVariable String courseId,
+                                            @PathVariable String lessonId) {
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            Enrollment updated = enrollmentService.completeLesson(principal.id(), courseId, lessonId);
+            return ResponseEntity.ok(updated);
+        } catch (EnrollmentNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (CourseNotFoundException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

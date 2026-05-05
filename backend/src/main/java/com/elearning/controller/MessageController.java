@@ -3,8 +3,10 @@ package com.elearning.controller;
 import com.elearning.dto.MessageDTO;
 import com.elearning.model.Message;
 import com.elearning.repository.PersonRepository;
+import com.elearning.security.AuthenticatedUser;
 import com.elearning.service.MessageService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -68,16 +70,24 @@ public class MessageController {
     }
 
     /**
-     * Partially updates an existing message.
+     * Partially updates an existing message. Only the receiver can mark as read/unread.
      *
      * @param id      the message ID
      * @param message the fields to update
-     * @return 200 with the updated message, or 404 if not found
+     * @return 200 with the updated message, 403 if not the receiver, or 404 if not found
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Message> updateMessage(@PathVariable String id, @RequestBody Message message) {
-        return messageService.update(id, message)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<?> updateMessage(@PathVariable String id, @RequestBody Message message) {
+        return messageService.getById(id)
+                .map(existing -> {
+                    AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    if (!existing.getReceiverId().equals(principal.id())) {
+                        return ResponseEntity.status(403).body("Only the recipient can update this message");
+                    }
+                    return messageService.update(id, message)
+                            .map(updated -> ResponseEntity.ok((Object) updated))
+                            .orElse(ResponseEntity.notFound().build());
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -160,6 +170,17 @@ public class MessageController {
     @GetMapping("/sender/{senderId}")
     public ResponseEntity<List<MessageDTO>> getBySenderId(@PathVariable String senderId) {
         return ResponseEntity.ok(toDTOList(messageService.getBySenderId(senderId)));
+    }
+
+    /**
+     * Retrieves all non-blast messages sent by a given user.
+     *
+     * @param senderId the sender's ID
+     * @return 200 with list of non-blast messages
+     */
+    @GetMapping("/sender/{senderId}/direct")
+    public ResponseEntity<List<MessageDTO>> getBySenderIdDirect(@PathVariable String senderId) {
+        return ResponseEntity.ok(toDTOList(messageService.getBySenderIdNonBlast(senderId)));
     }
 
     /**

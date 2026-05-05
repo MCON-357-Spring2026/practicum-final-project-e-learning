@@ -1,12 +1,11 @@
 <template>
-  <div class="sent-page">
-    <div class="sent-header">
-      <h1>Sent</h1>
-      <div class="sent-actions">
-        <router-link to="/messages" class="btn-link">Inbox</router-link>
-        <router-link to="/messages/compose" class="btn-compose">Compose</router-link>
+  <div class="messages-layout">
+    <MessagingSidebar />
+    <div class="sent-page">
+      <div class="sent-header">
+        <h1>Sent</h1>
+        <router-link v-if="isTeacherOrAdmin" to="/messages/blasts" class="btn-blasts">View Sent Blasts</router-link>
       </div>
-    </div>
 
     <p v-if="loading" class="status-text">Loading messages...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
@@ -20,15 +19,22 @@
         mode="sent"
       />
     </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { messageApi } from '@/api/messageApi'
 import MessagePreviewCard from '@/components/MessagePreviewCard.vue'
+
+const isTeacherOrAdmin = computed(() => {
+  const role = authStore.user?.role
+  return role === 'TEACHER' || role === 'ADMIN'
+})
+import MessagingSidebar from '@/components/MessagingSidebar.vue'
 import type { MessagePreviewData } from '@/components/MessagePreviewCard.vue'
 
 const authStore = useAuthStore()
@@ -44,7 +50,7 @@ onMounted(async () => {
     return
   }
   try {
-    const { data } = await messageApi.getBySenderId(authStore.user.id)
+    const { data } = await messageApi.getBySenderIdDirect(authStore.user.id)
     messages.value = data.sort(
       (a: MessagePreviewData, b: MessagePreviewData) =>
         new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
@@ -58,7 +64,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.messages-layout {
+  display: flex;
+}
+
 .sent-page {
+  flex: 1;
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;
@@ -75,6 +86,20 @@ onMounted(async () => {
   font-size: 1.5rem;
   font-weight: 400;
   color: #202124;
+}
+
+.btn-blasts {
+  color: #e94560;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #e94560;
+  border-radius: 4px;
+}
+
+.btn-blasts:hover {
+  background-color: #e94560;
+  color: #fff;
 }
 
 .sent-actions {

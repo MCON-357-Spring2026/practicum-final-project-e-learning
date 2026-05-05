@@ -1,48 +1,48 @@
 <template>
-  <div class="message-page">
-    <div class="message-toolbar">
-      <button class="btn-back" @click="$router.push('/messages')">
-        &larr; Back to Inbox
-      </button>
-      <div class="toolbar-right">
-        <button class="btn-unread" @click="markUnread" v-if="message?.read">Mark as unread</button>
-        <button class="btn-delete" @click="deleteMessage">Delete</button>
-      </div>
-    </div>
-
-    <p v-if="loading" class="loading-text">Loading message...</p>
-    <p v-else-if="error" class="error">{{ error }}</p>
-
-    <div v-else-if="message" class="message-container">
-      <div class="message-header">
-        <h1 class="message-subject">{{ message.subject || '(no subject)' }}</h1>
+  <div class="messages-layout">
+    <MessagingSidebar />
+    <div class="message-page">
+      <div class="message-toolbar">
+        <div class="toolbar-right">
+          <button class="btn-unread" @click="markUnread" v-if="message?.read">Mark as unread</button>
+          <button class="btn-delete" @click="deleteMessage">Delete</button>
+        </div>
       </div>
 
-      <div class="message-meta">
-        <div class="meta-row">
-          <div class="sender-info">
-            <div class="avatar">{{ senderInitial }}</div>
-            <div>
-              <span class="sender-name">{{ message.senderName || 'Unknown' }}</span>
-              <span class="sender-email">&lt;{{ message.senderEmail || '—' }}&gt;</span>
+      <p v-if="loading" class="loading-text">Loading message...</p>
+      <p v-else-if="error" class="error">{{ error }}</p>
+
+      <div v-else-if="message" class="message-container">
+        <div class="message-header">
+          <h1 class="message-subject">{{ message.subject || '(no subject)' }}</h1>
+        </div>
+
+        <div class="message-meta">
+          <div class="meta-row">
+            <div class="sender-info">
+              <div class="avatar">{{ senderInitial }}</div>
+              <div>
+                <span class="sender-name">{{ message.senderName || 'Unknown' }}</span>
+                <span class="sender-email">&lt;{{ message.senderEmail || '—' }}&gt;</span>
+              </div>
             </div>
+            <span class="message-date">{{ formattedDate }}</span>
           </div>
-          <span class="message-date">{{ formattedDate }}</span>
+          <div class="recipient-row">
+            to <span class="recipient-name">{{ message.receiverName || 'Unknown' }}</span>
+            <span class="recipient-email">&lt;{{ message.receiverEmail || '—' }}&gt;</span>
+          </div>
         </div>
-        <div class="recipient-row">
-          to <span class="recipient-name">{{ message.receiverName || 'Unknown' }}</span>
-          <span class="recipient-email">&lt;{{ message.receiverEmail || '—' }}&gt;</span>
+
+        <div class="message-body">
+          {{ message.body }}
         </div>
-      </div>
 
-      <div class="message-body">
-        {{ message.body }}
-      </div>
-
-      <div class="message-actions">
-        <button class="btn-secondary" @click="$router.push('/messages')">
-          View other messages with this user
-        </button>
+        <div class="message-actions">
+          <button class="btn-secondary" @click="$router.push('/messages')">
+            View other messages with this user
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -52,6 +52,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
+import MessagingSidebar from '@/components/MessagingSidebar.vue'
 import { messageApi } from '@/api/messageApi'
 
 interface MessageDTO {
@@ -133,7 +134,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.messages-layout {
+  display: flex;
+}
+
 .message-page {
+  flex: 1;
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;

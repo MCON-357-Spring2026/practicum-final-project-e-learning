@@ -24,7 +24,21 @@ import Unauthorized from '@/pages/Unauthorized.vue'
 import Profile from '@/pages/Profile.vue'
 import Messages from '@/pages/messages/index.vue'
 import MessagesSent from '@/pages/messages/sent.vue'
+import MessageCompose from '@/pages/messages/compose.vue'
+import MessageBlasts from '@/pages/messages/blast.vue'
 import MessageDetail from '@/pages/messages/[id]/index.vue'
+
+function getRoleFromToken() {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.role ?? null
+  } catch {
+    return null
+  }
+}
 
 const routes = [
   { path: '/', redirect: '/courses' },
@@ -50,6 +64,8 @@ const routes = [
   { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
   { path: '/messages', name: 'Messages', component: Messages, meta: { requiresAuth: true } },
   { path: '/messages/sent', name: 'MessagesSent', component: MessagesSent, meta: { requiresAuth: true } },
+  { path: '/messages/compose', name: 'MessageCompose', component: MessageCompose, meta: { requiresAuth: true } },
+  { path: '/messages/blasts', name: 'MessageBlasts', component: MessageBlasts, meta: { requiresAuth: true, requiresPrivileged: true } },
   { path: '/messages/:id', name: 'MessageDetail', component: MessageDetail, props: true, meta: { requiresAuth: true } },
   { path: '/unauthorized', name: 'Unauthorized', component: Unauthorized },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: ResourceNotFound }
@@ -63,8 +79,16 @@ const router = createRouter({
 // Navigation guard for auth-protected routes
 router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
+
   if (to.meta.requiresAuth && !token) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
+  } else if (to.meta.requiresPrivileged) {
+    const role = getRoleFromToken()
+    if (role !== 'TEACHER' && role !== 'ADMIN') {
+      next({ name: 'Unauthorized' })
+    } else {
+      next()
+    }
   } else {
     next()
   }

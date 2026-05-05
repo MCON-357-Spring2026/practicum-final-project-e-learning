@@ -14,6 +14,11 @@
     </div>
     <div class="form-group">
       <label for="text">Lesson Text</label>
+      <div class="text-upload-row">
+        <label class="upload-text-btn" for="textFile">Import from file</label>
+        <input id="textFile" type="file" accept=".txt,.docx,.md,.html,.rtf,.csv" class="file-input" @change="onTextFileSelected" />
+        <span v-if="textFileName" class="text-file-name">{{ textFileName }}</span>
+      </div>
       <textarea id="text" v-model="form.text" rows="8" placeholder="Write the lesson content here..."></textarea>
     </div>
 
@@ -47,6 +52,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import mammoth from 'mammoth'
 
 export interface LessonFormData {
   title: string
@@ -75,6 +81,7 @@ function isVideo(url: string): boolean {
   return lower.startsWith('data:video') || videoExtensions.some(ext => lower.includes(ext))
 }
 
+const textFileName = ref('')
 const mediaPreviews = ref<{ url: string; type: 'image' | 'video' }[]>([])
 
 // Build previews from existing media on mount (for edit mode)
@@ -86,6 +93,25 @@ onMounted(() => {
     }))
   }
 })
+
+async function onTextFileSelected(e: Event) {
+  const input = e.target as HTMLInputElement
+  if (!input.files?.length) return
+  const file = input.files[0]
+  textFileName.value = file.name
+  try {
+    if (file.name.endsWith('.docx')) {
+      const arrayBuffer = await file.arrayBuffer()
+      const result = await mammoth.extractRawText({ arrayBuffer })
+      props.form.text = result.value
+    } else {
+      props.form.text = await file.text()
+    }
+  } catch {
+    props.form.text = 'Error reading file.'
+  }
+  input.value = ''
+}
 
 function onMediaSelected(e: Event) {
   const input = e.target as HTMLInputElement
@@ -215,6 +241,36 @@ button[type="submit"] {
 
 button[type="submit"]:disabled {
   opacity: 0.6;
+}
+
+.file-input {
+  display: none;
+}
+
+.text-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.upload-text-btn {
+  padding: 0.4rem 0.75rem;
+  background-color: #e94560;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.upload-text-btn:hover {
+  background-color: #d63350;
+}
+
+.text-file-name {
+  font-size: 0.85rem;
+  color: #666;
 }
 
 .error {

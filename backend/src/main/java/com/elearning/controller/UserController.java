@@ -54,7 +54,7 @@ public class UserController {
      * @param id the user ID
      * @return 200 with the user DTO, or 404 if not found
      */
-    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
+    @PreAuthorize("#id == authentication.principal.id or hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
         return userService.getById(id)

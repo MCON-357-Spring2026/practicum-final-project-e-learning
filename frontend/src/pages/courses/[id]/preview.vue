@@ -60,9 +60,8 @@ async function enroll() {
   enrolling.value = true
   enrollError.value = ''
   try {
-    await axiosClient.post('/enrollments/', {
-      studentId: authStore.user.id,
-      courseId: props.id
+    await axiosClient.post(`/enrollments/student/${authStore.user.id}`, props.id, {
+      headers: { 'Content-Type': 'text/plain' }
     })
     router.push(`/courses/${props.id}`)
   } catch (e: any) {

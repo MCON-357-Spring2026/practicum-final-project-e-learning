@@ -10,13 +10,16 @@ export const messageApi = {
   getBySenderId(senderId: string) {
     return axiosClient.get(`/messages/sender/${senderId}`)
   },
+  getBySenderIdDirect(senderId: string) {
+    return axiosClient.get(`/messages/sender/${senderId}/direct`)
+  },
   getByReceiverId(receiverId: string) {
     return axiosClient.get(`/messages/receiver/${receiverId}`)
   },
   getConversation(senderId: string, receiverId: string) {
     return axiosClient.get(`/messages/conversation`, { params: { senderId, receiverId } })
   },
-  send(message: { receiverId: string; subject: string; body: string }) {
+  send(message: { senderId: string; receiverId: string; subject: string; body: string }) {
     return axiosClient.post(`/messages/`, message)
   },
   markAsRead(id: string) {

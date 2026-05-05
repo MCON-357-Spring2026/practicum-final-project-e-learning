@@ -47,7 +47,13 @@ public class JwtFilterTest {
         jwtFilter.doFilter(request, response, filterChain);
 
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        assertEquals("testuser", SecurityContextHolder.getContext().getAuthentication().getName());
+        assertInstanceOf(com.elearning.security.AuthenticatedUser.class,
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        com.elearning.security.AuthenticatedUser principal =
+                (com.elearning.security.AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        assertEquals("testuser", principal.username());
+        assertEquals("user123", principal.id());
+        assertEquals("STUDENT", principal.role());
         verify(filterChain, times(1)).doFilter(request, response);
     }
 

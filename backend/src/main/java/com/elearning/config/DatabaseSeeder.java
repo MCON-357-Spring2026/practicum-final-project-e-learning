@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -24,16 +25,21 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final QuizRepository quizRepo;
     private final EnrollmentRepository enrollmentRepo;
     private final PersonRepository personRepo;
+        private final MessageRepository messageRepo;
+        private final MessageBlastRepository messageBlastRepo;
     private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(CourseRepository courseRepo, LessonRepository lessonRepo,
-                          QuizRepository quizRepo, EnrollmentRepository enrollmentRepo,
-                          PersonRepository personRepo, PasswordEncoder passwordEncoder) {
+                                                  QuizRepository quizRepo, EnrollmentRepository enrollmentRepo,
+                                                  PersonRepository personRepo, MessageRepository messageRepo,
+                                                  MessageBlastRepository messageBlastRepo, PasswordEncoder passwordEncoder) {
         this.courseRepo = courseRepo;
         this.lessonRepo = lessonRepo;
         this.quizRepo = quizRepo;
         this.enrollmentRepo = enrollmentRepo;
         this.personRepo = personRepo;
+                this.messageRepo = messageRepo;
+                this.messageBlastRepo = messageBlastRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -55,26 +61,30 @@ public class DatabaseSeeder implements CommandLineRunner {
         // ========== USERS (students and instructors) - created FIRST for referential integrity ==========
         User student1 = new User("Alice", "Johnson", new GregorianCalendar(2000, 5, 15).getTime(),
                 Gender.FEMALE, new HomeAddress("123 Main St", "Springfield", "IL", "62704"),
-                "student1", passwordEncoder.encode("password123"), null, Role.STUDENT);
+                "student1", passwordEncoder.encode("password123"), "alice.johnson@example.com", Role.STUDENT);
         User student2 = new User("Bob", "Smith", new GregorianCalendar(1999, 8, 22).getTime(),
                 Gender.MALE, new HomeAddress("456 Oak Ave", "Chicago", "IL", "60601"),
-                "student2", passwordEncoder.encode("password456"), null, Role.STUDENT);
+                "student2", passwordEncoder.encode("password456"), "bob.smith@example.com", Role.STUDENT);
 
         Teacher instructor1 = new Teacher("Dr. Jane", "Doe", new GregorianCalendar(1980, 3, 10).getTime(),
                 Gender.FEMALE, new HomeAddress("789 Elm St", "Urbana", "IL", "61801"),
-                "instructor1", passwordEncoder.encode("instrpass1"), null, Role.TEACHER, "Computer Science");
+                "instructor1", passwordEncoder.encode("instrpass1"), "jane.doe@example.com", Role.TEACHER, "Computer Science");
         Teacher instructor2 = new Teacher("Prof. John", "Williams", new GregorianCalendar(1975, 11, 5).getTime(),
                 Gender.MALE, new HomeAddress("321 Pine Rd", "Champaign", "IL", "61820"),
-                "instructor2", passwordEncoder.encode("instrpass2"), null, Role.TEACHER, "Computer Science");
+                "instructor2", passwordEncoder.encode("instrpass2"), "john.williams@example.com", Role.TEACHER, "Computer Science");
         Teacher instructor3 = new Teacher("Dr. Sarah", "Lee", new GregorianCalendar(1982, 7, 18).getTime(),
                 Gender.FEMALE, new HomeAddress("654 Maple Dr", "Evanston", "IL", "60201"),
-                "instructor3", passwordEncoder.encode("instrpass3"), null, Role.TEACHER, "Mathematics");
+                "instructor3", passwordEncoder.encode("instrpass3"), "sarah.lee@example.com", Role.TEACHER, "Mathematics");
+        User admin = new User("System", "Admin", new GregorianCalendar(1978, 1, 2).getTime(),
+                Gender.MALE, new HomeAddress("1 Admin Plaza", "Chicago", "IL", "60611"),
+                "admin1", passwordEncoder.encode("adminpass1"), "admin@example.com", Role.ADMIN);
 
         student1 = personRepo.save(student1);
         student2 = personRepo.save(student2);
         instructor1 = personRepo.save(instructor1);
         instructor2 = personRepo.save(instructor2);
         instructor3 = personRepo.save(instructor3);
+        admin = personRepo.save(admin);
 
         // ========== COURSES (using real instructor IDs) ==========
         Course javaCourse = new Course("Introduction to Java", instructor1.getId(), "Computer Science", 3, 101, "Learn the fundamentals of Java programming including OOP, data structures, and algorithms.");
@@ -226,12 +236,44 @@ public class DatabaseSeeder implements CommandLineRunner {
         personRepo.save(student1);
         personRepo.save(student2);
 
+                // ========== SAMPLE DIRECT MESSAGES ==========
+                Message directMessage = Message.builder()
+                                .senderId(student1.getId())
+                                .receiverId(instructor1.getId())
+                                .subject("Question about Java Basics")
+                                .body("Could you clarify the difference between instance and local variables?")
+                                .read(false)
+                                .blast(false)
+                                .blastId(null)
+                                .sentAt(LocalDateTime.now().minusDays(3))
+                                .build();
+                messageRepo.save(directMessage);
+
+                // ========== SAMPLE MESSAGE BLASTS ==========
+                createBlastSeed(
+                                instructor1.getId(),
+                                new ArrayList<>(Arrays.asList(student1.getId(), student2.getId())),
+                                "Java Course Reminder",
+                                "Please complete Object-Oriented Programming before Friday's live session.",
+                                LocalDateTime.now().minusDays(2)
+                );
+
+                createBlastSeed(
+                                admin.getId(),
+                                new ArrayList<>(Arrays.asList(instructor1.getId(), instructor2.getId(), instructor3.getId())),
+                                "Faculty Meeting",
+                                "Reminder: faculty meeting tomorrow at 10:00 AM in Room 204.",
+                                LocalDateTime.now().minusDays(1)
+                );
+
         System.out.println("Database seeded successfully!");
         System.out.println("  - 5 courses");
         System.out.println("  - 14 lessons");
         System.out.println("  - 4 quizzes");
         System.out.println("  - 4 enrollments");
-        System.out.println("  - 2 students, 3 instructors");
+                System.out.println("  - 3 messages (1 direct, 2 blasts)");
+                System.out.println("  - 2 message blasts");
+                System.out.println("  - 2 students, 3 instructors, 1 admin");
     }
 
     private Lesson createLesson(String title, String description, String courseId, int minutes, ArrayList<String> resources) {
@@ -241,4 +283,32 @@ public class DatabaseSeeder implements CommandLineRunner {
         lesson.setResources(resources);
         return lesson;
     }
+
+        private void createBlastSeed(String senderId, ArrayList<String> recipientIds, String subject, String body, LocalDateTime sentAt) {
+                MessageBlast blast = new MessageBlast();
+                blast.setSenderId(senderId);
+                blast.setSubject(subject);
+                blast.setSentAt(sentAt);
+                blast.setMessageIds(new ArrayList<>());
+                blast = messageBlastRepo.save(blast);
+
+                ArrayList<String> messageIds = new ArrayList<>();
+                for (int i = 0; i < recipientIds.size(); i++) {
+                        Message message = Message.builder()
+                                        .senderId(senderId)
+                                        .receiverId(recipientIds.get(i))
+                                        .subject(subject)
+                                        .body(body)
+                                        .read(false)
+                                        .blast(true)
+                                        .blastId(blast.getId())
+                                        .sentAt(sentAt.plusMinutes(i))
+                                        .build();
+                        Message savedMessage = messageRepo.save(message);
+                        messageIds.add(savedMessage.getId());
+                }
+
+                blast.setMessageIds(messageIds);
+                messageBlastRepo.save(blast);
+        }
 }

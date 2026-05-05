@@ -234,4 +234,25 @@ public class EnrollmentService implements ServiceInterface<Enrollment> {
             }
         });
     }
+
+    /**
+     * Marks a lesson as completed for a student's enrollment in a course.
+     *
+     * @param studentId the student's ID
+     * @param courseId  the course ID
+     * @param lessonId  the lesson ID to mark as completed
+     * @return the updated enrollment
+     * @throws EnrollmentNotFoundException if no enrollment is found
+     * @throws CourseNotFoundException     if the course is not found
+     */
+    public Enrollment completeLesson(String studentId, String courseId, String lessonId) {
+        Enrollment enrollment = Optional.ofNullable(repo.findByStudentIdAndCourseId(studentId, courseId))
+                .orElseThrow(() -> new EnrollmentNotFoundException("Enrollment not found for student " + studentId + " in course " + courseId));
+
+        Course course = courseRepo.findById(courseId)
+                .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + courseId));
+
+        enrollment.markLessonAsCompleted(lessonId, course);
+        return repo.save(enrollment);
+    }
 }

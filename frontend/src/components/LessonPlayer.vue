@@ -34,6 +34,14 @@
         </li>
       </ul>
     </section>
+
+    <!-- Mark as Complete -->
+    <div v-if="showComplete" class="complete-section">
+      <button v-if="completed" class="btn-complete done" disabled>✓ Lesson Completed</button>
+      <button v-else-if="completing" class="btn-complete" disabled>Marking...</button>
+      <button v-else class="btn-complete" @click="$emit('complete')">Mark as Complete</button>
+      <p v-if="completeError" class="error">{{ completeError }}</p>
+    </div>
   </div>
 </template>
 
@@ -42,6 +50,14 @@ import type { Lesson } from '@/api/lessonApi'
 
 defineProps<{
   lesson: Lesson
+  showComplete?: boolean
+  completed?: boolean
+  completing?: boolean
+  completeError?: string
+}>()
+
+defineEmits<{
+  (e: 'complete'): void
 }>()
 
 const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov']
@@ -117,5 +133,40 @@ function isVideo(url: string): boolean {
 .resource-list a {
   color: #e94560;
   word-break: break-all;
+}
+
+.complete-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.btn-complete {
+  padding: 0.6rem 1.5rem;
+  background-color: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-complete:hover:not(:disabled) {
+  background-color: #c73a52;
+}
+
+.btn-complete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-complete.done {
+  background-color: #28a745;
+  opacity: 1;
+}
+
+.error {
+  color: #e94560;
+  margin-top: 0.5rem;
 }
 </style>

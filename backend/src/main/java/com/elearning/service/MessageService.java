@@ -36,6 +36,9 @@ public class MessageService implements ServiceInterface<Message> {
     public Message create(Message message) {
         message.setSentAt(LocalDateTime.now());
         message.setRead(false);
+        if (!message.isBlast()) {
+            message.setBlast(false);
+        }
         return repo.save(message);
     }
 
@@ -80,6 +83,10 @@ public class MessageService implements ServiceInterface<Message> {
 
     public List<Message> getBySenderId(String senderId) {
         return repo.findBySenderId(senderId);
+    }
+
+    public List<Message> getBySenderIdNonBlast(String senderId) {
+        return repo.findBySenderIdAndBlast(senderId, false);
     }
 
     public List<Message> getBySenderAndReceiver(String senderId, String receiverId) {

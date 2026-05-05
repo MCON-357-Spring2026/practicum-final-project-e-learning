@@ -25,8 +25,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="image">Image URL</label>
-        <input id="image" v-model="form.image" type="text" />
+        <label for="image">Course Image</label>
+        <div class="image-input-group">
+          <label class="upload-btn" for="imageFile">Upload Image</label>
+          <input id="imageFile" type="file" accept="image/*" class="file-input" @change="onImageSelected" />
+          <span class="or-divider">or</span>
+          <input id="image" v-model="form.image" type="text" placeholder="Paste an image URL" />
+        </div>
+        <div v-if="imagePreview" class="image-preview">
+          <img :src="imagePreview" alt="Course image preview" />
+          <button type="button" class="remove-btn" @click="clearImage">&times;</button>
+        </div>
       </div>
       <p v-if="error" class="error">{{ error }}</p>
       <button type="submit" :disabled="loading">{{ loading ? 'Creating...' : 'Create Course' }}</button>
@@ -35,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { courseApi } from '@/api/courseApi'
@@ -54,6 +63,32 @@ const form = reactive({
 
 const error = ref('')
 const loading = ref(false)
+const imagePreview = ref('')
+
+function onImageSelected(e: Event) {
+  const input = e.target as HTMLInputElement
+  if (!input.files?.length) return
+  const file = input.files[0]
+  const reader = new FileReader()
+  reader.onload = () => {
+    const dataUrl = reader.result as string
+    form.image = dataUrl
+    imagePreview.value = dataUrl
+  }
+  reader.readAsDataURL(file)
+  input.value = ''
+}
+
+function clearImage() {
+  form.image = ''
+  imagePreview.value = ''
+}
+
+watch(() => form.image, (val) => {
+  if (val && !val.startsWith('data:')) {
+    imagePreview.value = val
+  }
+})
 
 async function handleCreate() {
   loading.value = true
@@ -120,5 +155,68 @@ button:disabled {
 
 .error {
   color: #e94560;
+}
+
+.image-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.image-input-group input[type="text"] {
+  flex: 1;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-btn {
+  padding: 0.5rem 1rem;
+  background-color: #e94560;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  background-color: #d63350;
+}
+
+.or-divider {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.image-preview {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 1rem;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
 }
 </style>

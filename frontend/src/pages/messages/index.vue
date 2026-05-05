@@ -1,12 +1,10 @@
 <template>
-  <div class="inbox-page">
-    <div class="inbox-header">
-      <h1>Inbox</h1>
-      <div class="inbox-actions">
-        <router-link to="/messages/sent" class="btn-link">Sent</router-link>
-        <router-link to="/messages/compose" class="btn-compose">Compose</router-link>
+  <div class="messages-layout">
+    <MessagingSidebar />
+    <div class="inbox-page">
+      <div class="inbox-header">
+        <h1>Inbox</h1>
       </div>
-    </div>
 
     <p v-if="loading" class="status-text">Loading messages...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
@@ -20,6 +18,7 @@
         mode="inbox"
       />
     </div>
+    </div>
   </div>
 </template>
 
@@ -29,6 +28,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { messageApi } from '@/api/messageApi'
 import MessagePreviewCard from '@/components/MessagePreviewCard.vue'
+import MessagingSidebar from '@/components/MessagingSidebar.vue'
 import type { MessagePreviewData } from '@/components/MessagePreviewCard.vue'
 
 const authStore = useAuthStore()
@@ -58,7 +58,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.messages-layout {
+  display: flex;
+}
+
 .inbox-page {
+  flex: 1;
   max-width: 800px;
   margin: 2rem auto;
   padding: 0 1rem;

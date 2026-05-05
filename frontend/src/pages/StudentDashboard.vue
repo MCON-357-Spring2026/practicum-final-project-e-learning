@@ -2,6 +2,14 @@
   <div class="student-dashboard">
     <h1>My Dashboard</h1>
 
+    <router-link
+      v-if="authStore.user?.role === 'TEACHER' || authStore.user?.role === 'ADMIN'"
+      to="/instructor"
+      class="back-instructor-btn"
+    >
+      &larr; Back to Instructor View
+    </router-link>
+
     <div v-if="authStore.user?.role === 'PENDING'" class="pending-info">
       Once you are approved to be a teacher, you will be given access to the teacher dashboard and pages.
     </div>
@@ -203,5 +211,22 @@ onMounted(async () => {
 
 .error {
   color: #e94560;
+}
+
+.back-instructor-btn {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  padding: 0.45rem 1rem;
+  background-color: #fff;
+  color: #e94560;
+  border: 1px solid #e94560;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.back-instructor-btn:hover {
+  background-color: #fef0f3;
 }
 </style>
