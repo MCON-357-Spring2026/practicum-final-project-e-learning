@@ -1,13 +1,10 @@
 <template>
-  <div class="messages-layout">
-    <MessagingSidebar />
-    <div class="compose-page">
-      <div class="compose-header">
-        <h1>Compose Message</h1>
-      </div>
+  <div class="compose-view">
+    <div class="compose-header">
+      <h2>Compose Message</h2>
+    </div>
 
     <form @submit.prevent="handleSend" class="compose-form">
-      <!-- Blast Toggle (Teachers/Admins only) -->
       <div class="form-group toggle-row" v-if="isTeacherOrAdmin">
         <label>Message Blast</label>
         <label class="toggle">
@@ -16,7 +13,6 @@
         </label>
       </div>
 
-      <!-- BLAST MODE -->
       <template v-if="blastMode && isTeacherOrAdmin">
         <div class="form-group">
           <label>Recipients</label>
@@ -32,9 +28,7 @@
         </div>
       </template>
 
-      <!-- NORMAL MODE -->
       <template v-else>
-        <!-- Course Selection -->
         <div class="form-group">
           <label>Course</label>
           <select v-model="selectedCourseId" @change="onCourseChange" required>
@@ -43,7 +37,6 @@
           </select>
         </div>
 
-        <!-- Recipient Selection (Teachers pick a student, Students auto-target instructor) -->
         <div class="form-group" v-if="isTeacherOrAdmin">
           <label>Recipient (Student)</label>
           <select v-model="recipientId" :disabled="loadingStudents || students.length === 0" required>
@@ -62,13 +55,11 @@
         </div>
       </template>
 
-      <!-- Subject -->
       <div class="form-group">
         <label>Subject</label>
         <input v-model="subject" type="text" placeholder="Subject" required />
       </div>
 
-      <!-- Body -->
       <div class="form-group">
         <label>Message</label>
         <textarea v-model="body" rows="8" placeholder="Write your message..." required></textarea>
@@ -84,20 +75,22 @@
       </div>
     </form>
   </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
-import MessagingSidebar from '@/components/MessagingSidebar.vue'
 import { courseApi } from '@/api/courseApi'
 import { userApi } from '@/api/userApi'
 import { messageApi } from '@/api/messageApi'
 import axiosClient from '@/api/axiosClient'
 import type { Course } from '@/api/courseApi'
 import type { UserInfo } from '@/api/userApi'
+
+const props = defineProps<{
+  userId: string
+}>()
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -110,7 +103,6 @@ const body = ref('')
 
 const students = ref<UserInfo[]>([])
 const loadingStudents = ref(false)
-const instructorName = ref('')
 const instructorLabel = ref('')
 
 const blastMode = ref(false)
@@ -126,19 +118,17 @@ const isTeacherOrAdmin = computed(() => {
 })
 
 onMounted(async () => {
-  if (!authStore.user) {
-    router.push('/login')
+  if (!props.userId) {
+    error.value = 'Missing user context for compose.'
     return
   }
 
   try {
     if (isTeacherOrAdmin.value) {
-      // Teachers see their own courses
-      const { data } = await courseApi.getByInstructor(authStore.user.id)
+      const { data } = await courseApi.getByInstructor(props.userId)
       courses.value = data
     } else {
-      // Students see courses they are enrolled in
-      const { data: enrollments } = await axiosClient.get(`/enrollments/student/${authStore.user.id}`)
+      const { data: enrollments } = await axiosClient.get(`/enrollments/student/${props.userId}`)
       const courseIds: string[] = enrollments.map((e: any) => e.courseId)
       const coursePromises = courseIds.map((id: string) => courseApi.getById(id))
       const results = await Promise.all(coursePromises)
@@ -152,14 +142,12 @@ onMounted(async () => {
 async function onCourseChange() {
   recipientId.value = ''
   students.value = []
-  instructorName.value = ''
   instructorLabel.value = ''
   error.value = ''
 
   if (!selectedCourseId.value) return
 
   if (isTeacherOrAdmin.value) {
-    // Load enrolled students for the selected course
     loadingStudents.value = true
     try {
       const { data: studentIds } = await axiosClient.get<string[]>(
@@ -178,13 +166,11 @@ async function onCourseChange() {
       loadingStudents.value = false
     }
   } else {
-    // Students: resolve the course instructor
     const course = courses.value.find(c => c.id === selectedCourseId.value)
     if (course?.instructorId) {
       recipientId.value = course.instructorId
       try {
         const { data: instructor } = await userApi.getById(course.instructorId)
-        instructorName.value = `${instructor.firstName} ${instructor.lastName}`
         instructorLabel.value = `${instructor.firstName} ${instructor.lastName} (${instructor.username})`
       } catch {
         instructorLabel.value = 'Instructor'
@@ -194,7 +180,6 @@ async function onCourseChange() {
 }
 
 function onBlastToggle() {
-  // Reset fields when toggling
   blastTarget.value = ''
   recipientId.value = ''
   students.value = []
@@ -227,7 +212,7 @@ async function handleSend() {
         return
       }
       await messageApi.send({
-        senderId: authStore.user!.id,
+        senderId: props.userId,
         receiverId: recipientId.value,
         subject: subject.value,
         body: body.value
@@ -244,40 +229,15 @@ async function handleSend() {
 </script>
 
 <style scoped>
-.messages-layout {
-  display: flex;
-}
-
-.compose-page {
-  flex: 1;
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
-
 .compose-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.compose-header h1 {
-  font-size: 1.5rem;
-  font-weight: 400;
+.compose-header h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
   color: #202124;
-}
-
-.btn-back {
-  color: #555;
-  font-size: 0.9rem;
-  text-decoration: none;
-  padding: 0.4rem 0.6rem;
-  border-radius: 4px;
-}
-
-.btn-back:hover {
-  background-color: #f0f0f0;
+  margin: 0;
 }
 
 .compose-form {
@@ -325,14 +285,17 @@ async function handleSend() {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   border-radius: 24px;
   transition: 0.2s;
 }
 
 .slider::before {
-  content: "";
+  content: '';
   position: absolute;
   height: 18px;
   width: 18px;

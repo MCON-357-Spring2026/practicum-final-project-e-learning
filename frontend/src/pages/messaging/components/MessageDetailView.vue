@@ -1,58 +1,53 @@
 <template>
-  <div class="messages-layout">
-    <MessagingSidebar />
-    <div class="message-page">
-      <div class="message-toolbar">
-        <div class="toolbar-right">
-          <button class="btn-unread" @click="markUnread" v-if="message?.read">Mark as unread</button>
-          <button class="btn-delete" @click="deleteMessage">Delete</button>
+  <div class="message-detail-view">
+    <div class="message-toolbar">
+      <div class="toolbar-right">
+        <button class="btn-unread" @click="markUnread" v-if="message?.read">Mark as unread</button>
+        <button class="btn-delete" @click="deleteMessage">Delete</button>
+      </div>
+    </div>
+
+    <p v-if="loading" class="loading-text">Loading message...</p>
+    <p v-else-if="error" class="error">{{ error }}</p>
+
+    <div v-else-if="message" class="message-container">
+      <div class="message-header">
+        <h2 class="message-subject">{{ message.subject || '(no subject)' }}</h2>
+      </div>
+
+      <div class="message-meta">
+        <div class="meta-row">
+          <div class="sender-info">
+            <div class="avatar">{{ senderInitial }}</div>
+            <div>
+              <span class="sender-name">{{ message.senderName || 'Unknown' }}</span>
+              <span class="sender-email">&lt;{{ message.senderEmail || '—' }}&gt;</span>
+            </div>
+          </div>
+          <span class="message-date">{{ formattedDate }}</span>
+        </div>
+        <div class="recipient-row">
+          to <span class="recipient-name">{{ message.receiverName || 'Unknown' }}</span>
+          <span class="recipient-email">&lt;{{ message.receiverEmail || '—' }}&gt;</span>
         </div>
       </div>
 
-      <p v-if="loading" class="loading-text">Loading message...</p>
-      <p v-else-if="error" class="error">{{ error }}</p>
+      <div class="message-body">
+        {{ message.body }}
+      </div>
 
-      <div v-else-if="message" class="message-container">
-        <div class="message-header">
-          <h1 class="message-subject">{{ message.subject || '(no subject)' }}</h1>
-        </div>
-
-        <div class="message-meta">
-          <div class="meta-row">
-            <div class="sender-info">
-              <div class="avatar">{{ senderInitial }}</div>
-              <div>
-                <span class="sender-name">{{ message.senderName || 'Unknown' }}</span>
-                <span class="sender-email">&lt;{{ message.senderEmail || '—' }}&gt;</span>
-              </div>
-            </div>
-            <span class="message-date">{{ formattedDate }}</span>
-          </div>
-          <div class="recipient-row">
-            to <span class="recipient-name">{{ message.receiverName || 'Unknown' }}</span>
-            <span class="recipient-email">&lt;{{ message.receiverEmail || '—' }}&gt;</span>
-          </div>
-        </div>
-
-        <div class="message-body">
-          {{ message.body }}
-        </div>
-
-        <div class="message-actions">
-          <button class="btn-secondary" @click="$router.push('/messages')">
-            View other messages with this user
-          </button>
-        </div>
+      <div class="message-actions">
+        <button class="btn-secondary" @click="$router.push('/messages')">
+          View other messages with this user
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth'
-import MessagingSidebar from '@/components/MessagingSidebar.vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { messageApi } from '@/api/messageApi'
 
 interface MessageDTO {
@@ -69,10 +64,11 @@ interface MessageDTO {
   sentAt: string
 }
 
-const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
+const props = defineProps<{
+  messageId: string
+}>()
 
+const router = useRouter()
 const message = ref<MessageDTO | null>(null)
 const loading = ref(true)
 const error = ref('')
@@ -114,16 +110,17 @@ async function deleteMessage() {
 }
 
 onMounted(async () => {
-  if (!authStore.user) {
-    router.push('/login')
+  if (!props.messageId) {
+    error.value = 'Message ID is required.'
+    loading.value = false
     return
   }
+
   try {
-    const id = route.params.id as string
-    const { data } = await messageApi.getById(id)
+    const { data } = await messageApi.getById(props.messageId)
     message.value = data
     if (!data.read) {
-      await messageApi.markAsRead(id)
+      await messageApi.markAsRead(props.messageId)
     }
   } catch {
     error.value = 'Message not found'
@@ -134,20 +131,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.messages-layout {
-  display: flex;
-}
-
-.message-page {
-  flex: 1;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
-
 .message-toolbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
@@ -157,20 +143,6 @@ onMounted(async () => {
 .toolbar-right {
   display: flex;
   gap: 0.5rem;
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0.4rem 0.6rem;
-  border-radius: 4px;
-}
-
-.btn-back:hover {
-  background-color: #f0f0f0;
 }
 
 .btn-delete {
@@ -219,8 +191,8 @@ onMounted(async () => {
 }
 
 .message-subject {
-  font-size: 1.4rem;
-  font-weight: 400;
+  font-size: 1.35rem;
+  font-weight: 500;
   color: #202124;
   margin: 0;
 }

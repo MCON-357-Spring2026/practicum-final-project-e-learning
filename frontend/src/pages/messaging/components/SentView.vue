@@ -1,50 +1,55 @@
 <template>
-  <div class="messages-layout">
-    <MessagingSidebar />
-    <div class="inbox-page">
-      <div class="inbox-header">
-        <h1>Inbox</h1>
-      </div>
+  <div class="sent-view">
+    <div class="sent-header">
+      <h2>Sent</h2>
+      <router-link v-if="isTeacherOrAdmin" to="/messages/blasts" class="btn-blasts">View Sent Blasts</router-link>
+    </div>
 
     <p v-if="loading" class="status-text">Loading messages...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
-    <p v-else-if="messages.length === 0" class="status-text">Your inbox is empty</p>
+    <p v-else-if="messages.length === 0" class="status-text">No sent messages</p>
 
     <div v-else class="message-list">
       <MessagePreviewCard
         v-for="msg in messages"
         :key="msg.id"
         :message="msg"
-        mode="inbox"
+        mode="sent"
       />
-    </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/store/auth'
 import { messageApi } from '@/api/messageApi'
-import MessagePreviewCard from '@/components/MessagePreviewCard.vue'
-import MessagingSidebar from '@/components/MessagingSidebar.vue'
-import type { MessagePreviewData } from '@/components/MessagePreviewCard.vue'
+import MessagePreviewCard from './MessagePreviewCard.vue'
+import type { MessagePreviewData } from './MessagePreviewCard.vue'
+
+const props = defineProps<{
+  userId: string
+}>()
 
 const authStore = useAuthStore()
-const router = useRouter()
-
 const messages = ref<MessagePreviewData[]>([])
 const loading = ref(true)
 const error = ref('')
 
+const isTeacherOrAdmin = computed(() => {
+  const role = authStore.user?.role
+  return role === 'TEACHER' || role === 'ADMIN'
+})
+
 onMounted(async () => {
-  if (!authStore.user) {
-    router.push('/login')
+  if (!props.userId) {
+    error.value = 'Missing user context for sent messages.'
+    loading.value = false
     return
   }
+
   try {
-    const { data } = await messageApi.getByReceiverId(authStore.user.id)
+    const { data } = await messageApi.getBySenderIdDirect(props.userId)
     messages.value = data.sort(
       (a: MessagePreviewData, b: MessagePreviewData) =>
         new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
@@ -58,61 +63,32 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.messages-layout {
-  display: flex;
-}
-
-.inbox-page {
-  flex: 1;
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
-
-.inbox-header {
+.sent-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.inbox-header h1 {
-  font-size: 1.5rem;
-  font-weight: 400;
+.sent-header h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
   color: #202124;
+  margin: 0;
 }
 
-.inbox-actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.btn-link {
-  color: #555;
+.btn-blasts {
+  color: #e94560;
   font-size: 0.9rem;
   text-decoration: none;
-  padding: 0.4rem 0.6rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #e94560;
   border-radius: 4px;
 }
 
-.btn-link:hover {
-  background-color: #f0f0f0;
-  text-decoration: none;
-}
-
-.btn-compose {
+.btn-blasts:hover {
   background-color: #e94560;
   color: #fff;
-  padding: 0.45rem 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.btn-compose:hover {
-  background-color: #d63a54;
-  text-decoration: none;
 }
 
 .message-list {
