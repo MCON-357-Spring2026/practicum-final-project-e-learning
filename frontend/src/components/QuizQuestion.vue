@@ -63,7 +63,7 @@ const selectedAnswer = ref<number | null>(null)
 }
 
 .option.selected {
-  border-color: #e94560;
-  background-color: #fef0f2;
+  border-color: #3b82f6;
+  background-color: #eff6ff;
 }
 </style>

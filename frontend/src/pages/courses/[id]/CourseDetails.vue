@@ -25,7 +25,11 @@
           <h2>Lessons</h2>
           <p v-if="lessons.length === 0">No lessons yet.</p>
           <ul v-else>
-            <li v-for="lesson in lessons" :key="lesson.id">
+            <li
+              v-for="lesson in lessons"
+              :key="lesson.id"
+              :class="{ completed: isLessonComplete(lesson.id) }"
+            >
               <router-link :to="`/courses/${id}/lessons/${lesson.id}`">
                 {{ lesson.title }}
               </router-link>
@@ -36,10 +40,13 @@
           <h2>Quizzes</h2>
           <p v-if="quizzes.length === 0">No quizzes yet.</p>
           <ul v-else>
-            <li v-for="quiz in quizzes" :key="quiz.id">
+            <li v-for="quiz in quizzes" :key="quiz.id" class="quiz-item">
               <router-link :to="`/courses/${id}/quiz/${quiz.id}`">
                 {{ quiz.title }}
               </router-link>
+              <span v-if="getQuizGradeText(quiz.id)" class="quiz-grade">
+                {{ getQuizGradeText(quiz.id) }}
+              </span>
             </li>
           </ul>
         </div>
@@ -51,6 +58,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useCourseStore } from '@/store/course'
+import { useAuthStore } from '@/store/auth'
 import { lessonApi, type Lesson } from '@/api/lessonApi'
 import { quizApi, type Quiz } from '@/api/quizApi'
 import axiosClient from '@/api/axiosClient'
@@ -60,12 +68,24 @@ const props = defineProps<{
 }>()
 
 const courseStore = useCourseStore()
+const authStore = useAuthStore()
 const instructorName = ref('')
 const lessons = ref<Lesson[]>([])
 const quizzes = ref<Quiz[]>([])
+const completedLessons = ref<string[]>([])
+const completedQuizzes = ref<Record<string, { score: number; total: number }>>({})
 const loading = ref(true)
 
 const course = computed(() => courseStore.currentCourse)
+
+function isLessonComplete(lessonId: string) {
+  return completedLessons.value.includes(lessonId)
+}
+
+function getQuizGradeText(quizId: string) {
+  const grade = completedQuizzes.value[quizId]
+  return grade ? `${grade.score}%` : ''
+}
 
 onMounted(async () => {
   await courseStore.fetchById(props.id)
@@ -101,6 +121,19 @@ onMounted(async () => {
       Promise.all(c.quizIDs.map(qid => quizApi.getById(qid))).then(results => {
         quizzes.value = results.map(r => r.data)
       }).catch(() => {})
+    )
+  }
+
+  // Fetch enrollment progress if user is enrolled in this course
+  if (authStore.user) {
+    promises.push(
+      axiosClient
+        .get(`/enrollments/student/${authStore.user.id}/course/${props.id}`)
+        .then(res => {
+          completedLessons.value = res.data.completedLessons ?? []
+          completedQuizzes.value = res.data.completedQuizzes ?? {}
+        })
+        .catch(() => {})
     )
   }
 
@@ -167,6 +200,23 @@ onMounted(async () => {
 
 .column li {
   margin-bottom: 0.5rem;
+}
+
+.column li.completed::marker {
+  content: '✓ ';
+}
+
+.quiz-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.quiz-grade {
+  color: #555;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .error {

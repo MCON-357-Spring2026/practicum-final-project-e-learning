@@ -8,7 +8,7 @@
       <router-link to="/courses">Courses</router-link>
       <template v-if="authStore.isAuthenticated">
         <router-link :to="dashboardRoute">Dashboard</router-link>
-        <router-link to="/messages">Messages</router-link>
+        <router-link to="/messages">Messaging</router-link>
         <router-link to="/profile">Profile</router-link>
         <button @click="handleLogout" class="btn-link">Logout</button>
       </template>
@@ -43,52 +43,69 @@ function handleLogout() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1.5rem;
-  background-color: #1a1a2e;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 86px;
+  padding: 1.1rem 2rem;
+  background: linear-gradient(90deg, #101023 0%, #1d1d43 58%, #343474 100%);
   color: #fff;
+  border-bottom: 1px solid #2f2f4a;
+  box-shadow: 0 8px 20px rgba(26, 26, 46, 0.18);
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: bold;
+  gap: 0.7rem;
+  font-family: 'Lucida Calligraphy', 'Lucida Handwriting', 'Segoe Script', cursive;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: #e94560;
   text-decoration: none;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
 .navbar-logo {
-  height: 48px;
-  width: 48px;
+  height: 54px;
+  width: 54px;
   object-fit: contain;
 }
 
 .navbar-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem;
   align-items: center;
 }
 
-.navbar-links a {
+.navbar-links a,
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.4rem;
+  padding: 0 0.9rem;
+  border-radius: 999px;
   color: #eee;
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   text-decoration: none;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 .navbar-links a:hover,
-.navbar-links a.router-link-active {
+.navbar-links a.router-link-active,
+.btn-link:hover {
+  background-color: #2f2f4a;
   color: #e94560;
 }
 
 .btn-link {
   background: none;
   border: none;
-  color: #eee;
   cursor: pointer;
-  font-size: 1rem;
-}
-
-.btn-link:hover {
-  color: #e94560;
 }
 </style>

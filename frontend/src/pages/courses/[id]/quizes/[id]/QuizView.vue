@@ -28,7 +28,7 @@
 
       <div v-else class="result-card">
         <h2>Results</h2>
-        <p class="score">Score: {{ result.score }} / {{ result.total }}</p>
+        <p class="score">Score: {{ result.score }} / 100</p>
         <p class="feedback">{{ result.feedback }}</p>
 
         <div class="review">

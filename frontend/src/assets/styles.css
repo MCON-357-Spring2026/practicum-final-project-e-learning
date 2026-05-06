@@ -28,6 +28,10 @@ h1, h2, h3, h4 {
   line-height: 1.3;
 }
 
+h1 {
+  color: #1a1a2e;
+}
+
 /* === Utility === */
 .error {
   color: #e94560;

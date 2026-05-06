@@ -22,11 +22,7 @@ import CourseLessons from '@/pages/courses/[id]/quizes/index.vue'
 import ResourceNotFound from '@/pages/ResourceNotFound.vue'
 import Unauthorized from '@/pages/Unauthorized.vue'
 import Profile from '@/pages/Profile.vue'
-import Messages from '@/pages/messages/index.vue'
-import MessagesSent from '@/pages/messages/sent.vue'
-import MessageCompose from '@/pages/messages/compose.vue'
-import MessageBlasts from '@/pages/messages/blast.vue'
-import MessageDetail from '@/pages/messages/[id]/index.vue'
+import MessagingPage from '@/pages/messaging/index.vue'
 
 function getRoleFromToken() {
   const token = localStorage.getItem('token')
@@ -62,11 +58,57 @@ const routes = [
   { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true },
   { path: '/teachers/:id/preview', name: 'TeacherPreview', component: TeacherPreview, props: true },
   { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
-  { path: '/messages', name: 'Messages', component: Messages, meta: { requiresAuth: true } },
-  { path: '/messages/sent', name: 'MessagesSent', component: MessagesSent, meta: { requiresAuth: true } },
-  { path: '/messages/compose', name: 'MessageCompose', component: MessageCompose, meta: { requiresAuth: true } },
-  { path: '/messages/blasts', name: 'MessageBlasts', component: MessageBlasts, meta: { requiresAuth: true, requiresPrivileged: true } },
-  { path: '/messages/:id', name: 'MessageDetail', component: MessageDetail, props: true, meta: { requiresAuth: true } },
+  {
+    path: '/messages',
+    name: 'Messages',
+    component: MessagingPage,
+    props: (route) => ({
+      view: 'inbox',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/sent',
+    name: 'MessagesSent',
+    component: MessagingPage,
+    props: (route) => ({
+      view: 'sent',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/compose',
+    name: 'MessageCompose',
+    component: MessagingPage,
+    props: (route) => ({
+      view: 'compose',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/blasts',
+    name: 'MessageBlasts',
+    component: MessagingPage,
+    props: (route) => ({
+      view: 'blasts',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true, requiresPrivileged: true }
+  },
+  {
+    path: '/messages/:id',
+    name: 'MessageDetail',
+    component: MessagingPage,
+    props: (route) => ({
+      view: 'detail',
+      messageId: route.params.id,
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
   { path: '/unauthorized', name: 'Unauthorized', component: Unauthorized },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: ResourceNotFound }
 ]

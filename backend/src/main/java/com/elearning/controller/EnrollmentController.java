@@ -1,6 +1,7 @@
 package com.elearning.controller;
 
 import com.elearning.dto.GradeResultDTO;
+import com.elearning.dto.EnrollmentPreviewProgressDTO;
 import com.elearning.dto.QuizSubmissionDTO;
 import com.elearning.errors.CourseNotFoundException;
 import com.elearning.errors.EnrollmentNotFoundException;
@@ -97,8 +98,9 @@ public class EnrollmentController {
      * @return 200 with the enrollment, or 404 if not found
      */
     @GetMapping({"/student/{studentId}/course/{courseId}", "/course/{courseId}/student/{studentId}"})
-    public ResponseEntity<Enrollment> getEnrollmentByStudentIdAndCourseId(@PathVariable String studentId, @PathVariable String courseId) {
+    public ResponseEntity<EnrollmentPreviewProgressDTO> getEnrollmentByStudentIdAndCourseId(@PathVariable String studentId, @PathVariable String courseId) {
         return enrollmentService.getByStudentIdAndCourseId(studentId, courseId)
+                .map(EnrollmentPreviewProgressDTO::new)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
