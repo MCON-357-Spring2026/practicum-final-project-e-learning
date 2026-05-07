@@ -1,5 +1,6 @@
 <template>
   <div class="course-quizzes-page">
+    <router-link :to="`/courses/${props.id}`" class="back-link">← Back to course</router-link>
     <h1>Quizzes</h1>
 
     <p v-if="loading">Loading quizzes...</p>
@@ -10,7 +11,7 @@
       <router-link
         v-for="q in quizzes"
         :key="q.id"
-        :to="`/courses/${id}/quiz/${q.id}`"
+        :to="`/courses/${props.id}/quiz/${q.id}`"
         class="quiz-link"
       >
         <QuizPreviewCard :quiz="q" :grade="getGrade(q.id)" />
@@ -67,6 +68,14 @@ onMounted(async () => {
 .course-quizzes-page {
   max-width: 700px;
   margin: 2rem auto;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 600;
 }
 
 .quiz-list {

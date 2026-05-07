@@ -7,6 +7,7 @@
     <div class="navbar-links">
       <router-link to="/courses">Courses</router-link>
       <template v-if="authStore.isAuthenticated">
+        <router-link to="/teachers">Teachers</router-link>
         <router-link :to="dashboardRoute">Dashboard</router-link>
         <router-link to="/messages">Messaging</router-link>
         <router-link to="/profile">Profile</router-link>

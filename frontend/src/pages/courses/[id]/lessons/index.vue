@@ -1,5 +1,6 @@
 <template>
   <div class="course-lessons-page">
+    <router-link :to="`/courses/${props.id}`" class="back-link">← Back to course</router-link>
     <h1>Lessons</h1>
     <p v-if="loading">Loading lessons...</p>
     <p v-else-if="error" class="error">{{ error }}</p>
@@ -48,6 +49,14 @@ onMounted(async () => {
 .course-lessons-page {
   max-width: 700px;
   margin: 2rem auto;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 600;
 }
 
 .lesson-list {
