@@ -6,7 +6,7 @@
     </div>
     <div v-if="grade" class="attempt-badge">
       <span class="attempted-label">Completed</span>
-      <span class="score">{{ grade.score }}%</span>
+      <span class="score">{{ Number(grade.score).toFixed(1) }}%</span>
     </div>
   </div>
 </template>

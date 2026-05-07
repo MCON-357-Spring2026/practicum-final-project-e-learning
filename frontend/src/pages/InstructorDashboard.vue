@@ -24,19 +24,32 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { courseApi, type Course } from '@/api/courseApi'
+import { useAuthStore } from '@/store/auth'
 
 const courses = ref<Course[]>([])
 const loading = ref(false)
 const error = ref('')
+const authStore = useAuthStore()
+const router = useRouter()
 
 onMounted(async () => {
   loading.value = true
   try {
-    // TODO: replace with actual instructor ID from auth store
-    const response = await courseApi.getAll()
+    const instructorId = authStore.user?.id
+    if (!instructorId) {
+      router.replace('/unauthorized')
+      return
+    }
+
+    const response = await courseApi.getByInstructor(instructorId)
     courses.value = response.data
   } catch (e: any) {
+    if (e?.response?.status === 401 || e?.response?.status === 403) {
+      router.replace('/unauthorized')
+      return
+    }
     error.value = 'Failed to load courses'
   } finally {
     loading.value = false

@@ -125,10 +125,8 @@ public class Enrollment {
         if (!course.getQuizIDs().contains(quizId)) {
             throw new IllegalArgumentException("Quiz does not belong to this course");
         }
-        if (!completedQuizzes.containsKey(quizId)) {
-            completedQuizzes.put(quizId, grade);
-            updateProgress(course);
-        }
+        completedQuizzes.put(quizId, grade);
+        updateProgress(course);
     }
 
     @Override

@@ -22,7 +22,7 @@
       <!-- Two-column: Lessons & Quizzes -->
       <div class="content-columns">
         <div class="column">
-          <h2>Lessons</h2>
+          <h2><router-link :to="`/courses/${id}/lessons`">Lessons</router-link></h2>
           <p v-if="lessons.length === 0">No lessons yet.</p>
           <ul v-else>
             <li
@@ -37,7 +37,7 @@
           </ul>
         </div>
         <div class="column">
-          <h2>Quizzes</h2>
+          <h2><router-link :to="`/courses/${id}/quizzes`">Quizzes</router-link></h2>
           <p v-if="quizzes.length === 0">No quizzes yet.</p>
           <ul v-else>
             <li v-for="quiz in quizzes" :key="quiz.id" class="quiz-item">
@@ -84,7 +84,7 @@ function isLessonComplete(lessonId: string) {
 
 function getQuizGradeText(quizId: string) {
   const grade = completedQuizzes.value[quizId]
-  return grade ? `${grade.score}%` : ''
+  return grade ? `${Number(grade.score).toFixed(1)}%` : ''
 }
 
 onMounted(async () => {

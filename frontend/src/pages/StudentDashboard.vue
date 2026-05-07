@@ -1,14 +1,16 @@
 <template>
   <div class="student-dashboard">
-    <h1>My Dashboard</h1>
+    <div class="dashboard-header">
+      <h1>My Dashboard</h1>
 
-    <router-link
-      v-if="authStore.user?.role === 'TEACHER' || authStore.user?.role === 'ADMIN'"
-      to="/instructor"
-      class="back-instructor-btn"
-    >
-      &larr; Back to Instructor View
-    </router-link>
+      <router-link
+        v-if="authStore.user?.role === 'TEACHER' || authStore.user?.role === 'ADMIN'"
+        to="/instructor"
+        class="back-instructor-btn"
+      >
+        &larr; Back to Instructor View
+      </router-link>
+    </div>
 
     <div v-if="authStore.user?.role === 'PENDING'" class="pending-info">
       Once you are approved to be a teacher, you will be given access to the teacher dashboard and pages.
@@ -136,8 +138,13 @@ onMounted(async () => {
   padding: 0 1rem;
 }
 
-.student-dashboard h1 {
+.dashboard-header {
+  position: relative;
   margin-bottom: 1.5rem;
+}
+
+.student-dashboard h1 {
+  margin: 0;
 }
 
 .empty {
@@ -214,8 +221,12 @@ onMounted(async () => {
 }
 
 .back-instructor-btn {
-  display: inline-block;
-  margin-bottom: 1.5rem;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(calc(-100% - 1.2rem), -50%);
+  display: inline-flex;
+  align-items: center;
   padding: 0.45rem 1rem;
   background-color: #fff;
   color: #e94560;
@@ -228,5 +239,13 @@ onMounted(async () => {
 
 .back-instructor-btn:hover {
   background-color: #fef0f3;
+}
+
+@media (max-width: 1100px) {
+  .back-instructor-btn {
+    position: static;
+    transform: none;
+    margin-bottom: 0.75rem;
+  }
 }
 </style>

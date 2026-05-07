@@ -18,7 +18,8 @@ import EditLesson from '@/pages/courses/[id]/lessons/[id]/EditLesson.vue'
 import Teachers from '@/pages/teachers/index.vue'
 import TeacherDetail from '@/pages/teachers/[id]/index.vue'
 import TeacherPreview from '@/pages/teachers/[id]/preview.vue'
-import CourseLessons from '@/pages/courses/[id]/quizes/index.vue'
+import CourseLessons from '@/pages/courses/[id]/lessons/index.vue'
+import CourseQuizzes from '@/pages/courses/[id]/quizes/index.vue'
 import ResourceNotFound from '@/pages/ResourceNotFound.vue'
 import Unauthorized from '@/pages/Unauthorized.vue'
 import Profile from '@/pages/Profile.vue'
@@ -50,9 +51,10 @@ const routes = [
   { path: '/instructor', name: 'InstructorDashboard', component: InstructorDashboard, meta: { requiresAuth: true } },
   { path: '/dashboard', name: 'StudentDashboard', component: StudentDashboard, meta: { requiresAuth: true } },
   { path: '/courses/:id/lessons', name: 'CourseLessons', component: CourseLessons, props: true },
+  { path: '/courses/:id/quizzes', name: 'CourseQuizzes', component: CourseQuizzes, props: true },
   { path: '/courses/:courseId/lessons/:lessonId', name: 'LessonView', component: LessonView, props: true },
   { path: '/courses/:courseId/lessons/:lessonId/edit', name: 'EditLesson', component: EditLesson, props: true, meta: { requiresAuth: true } },
-  { path: '/courses/:courseId/quiz/:quizId', name: 'QuizView', component: QuizView, props: true },
+  { path: '/courses/:courseId/quiz/:quizId', name: 'QuizView', component: QuizView, props: true, meta: { requiresAuth: true } },
   { path: '/courses/:courseId/quiz/:quizId/edit', name: 'EditQuiz', component: EditQuiz, props: true, meta: { requiresAuth: true } },
   { path: '/teachers', name: 'Teachers', component: Teachers },
   { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true },
