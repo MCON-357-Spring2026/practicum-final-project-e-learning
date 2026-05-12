@@ -55,6 +55,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Auth endpoints — public
                 .requestMatchers("/api/auth/**").permitAll()
+                // Email validation — public (used on registration)
+                .requestMatchers(HttpMethod.GET, "/api/validate-email/**").permitAll()
                 // Courses — public reads, authenticated writes
                 .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/courses/**").hasAnyRole("TEACHER", "ADMIN")

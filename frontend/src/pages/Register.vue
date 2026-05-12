@@ -63,8 +63,9 @@
         </div>
 
         <div class="form-group">
-          <label for="email">Email</label>
-          <input id="email" v-model="form.email" type="email" />
+          <label for="email">Email <span class="required">*</span></label>
+          <p v-if="emailError" class="field-error">{{ emailError }}</p>
+          <input id="email" v-model="form.email" type="email" required @blur="validateEmail" />
         </div>
 
         <div class="form-group">
@@ -120,6 +121,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import type { RegisterPayload } from '@/api/authApi'
+import axiosClient from '@/api/axiosClient'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -144,6 +146,8 @@ const confirmPassword = ref('')
 const dobString = ref('')
 const error = ref('')
 const loading = ref(false)
+const emailError = ref('')
+const emailValid = ref<boolean | null>(null)
 
 const rules = computed(() => ({
   length: form.password.length >= 8,
@@ -162,8 +166,28 @@ const canSubmit = computed(() =>
   form.firstName.trim() !== '' &&
   form.lastName.trim() !== '' &&
   passwordValid.value &&
-  form.password === confirmPassword.value
+  form.password === confirmPassword.value &&
+  form.email.trim() !== '' &&
+  emailValid.value === true
 )
+
+async function validateEmail() {
+  emailError.value = ''
+  emailValid.value = null
+  if (!form.email) return
+  try {
+    const { data } = await axiosClient.get<boolean>(`/validate-email/${encodeURIComponent(form.email)}`)
+    if (data) {
+      emailValid.value = true
+    } else {
+      emailValid.value = false
+      emailError.value = 'This email address is invalid.'
+    }
+  } catch {
+    emailValid.value = false
+    emailError.value = 'Unable to validate email. Please try again.'
+  }
+}
 
 async function handleRegister() {
   loading.value = true
@@ -179,7 +203,7 @@ async function handleRegister() {
       dateOfBirth: dobString.value ? new Date(dobString.value).toISOString() : null,
       gender: form.gender || null,
       address: hasAddress ? { ...form.address } : null,
-      email: form.email || null,
+      email: form.email,
       accountType: form.accountType
     }
 

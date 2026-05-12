@@ -5,7 +5,10 @@
       <p class="department">{{ teacher.department ?? 'No department' }}</p>
       <p class="courses">{{ courseCount }} {{ courseCount === 1 ? 'course' : 'courses' }}</p>
     </div>
-    <router-link :to="detailLink" class="view-btn">View Details</router-link>
+    <div class="card-actions">
+      <button v-if="showPromote" class="promote-btn" @click.prevent="$emit('promote', teacher.id)">Promote to Admin</button>
+      <router-link :to="detailLink" class="view-btn">View Details</router-link>
+    </div>
   </div>
 </template>
 
@@ -14,8 +17,15 @@ import { computed } from 'vue'
 import { useAuthStore } from '@/store/auth'
 import type { LimitedTeacher } from '@/api/teacherApi'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   teacher: LimitedTeacher
+  showPromote?: boolean
+}>(), {
+  showPromote: false
+})
+
+defineEmits<{
+  promote: [id: string]
 }>()
 
 const authStore = useAuthStore()
@@ -61,6 +71,27 @@ const detailLink = computed(() => {
   color: #888;
   font-size: 0.85rem;
   margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promote-btn {
+  padding: 0.4rem 0.8rem;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.promote-btn:hover {
+  background-color: #27ae60;
 }
 
 .view-btn {

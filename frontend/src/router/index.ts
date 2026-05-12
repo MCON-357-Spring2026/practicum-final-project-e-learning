@@ -16,6 +16,7 @@ import QuizView from '@/pages/courses/[id]/quizes/[id]/QuizView.vue'
 import EditQuiz from '@/pages/courses/[id]/quizes/[id]/EditQuiz.vue'
 import EditLesson from '@/pages/courses/[id]/lessons/[id]/EditLesson.vue'
 import Teachers from '@/pages/teachers/index.vue'
+import AdminTeachers from '@/pages/teachers/AdminView.vue'
 import TeacherDetail from '@/pages/teachers/[id]/index.vue'
 import TeacherPreview from '@/pages/teachers/[id]/preview.vue'
 import CourseLessons from '@/pages/courses/[id]/lessons/index.vue'
@@ -57,6 +58,7 @@ const routes = [
   { path: '/courses/:courseId/quiz/:quizId', name: 'QuizView', component: QuizView, props: true, meta: { requiresAuth: true } },
   { path: '/courses/:courseId/quiz/:quizId/edit', name: 'EditQuiz', component: EditQuiz, props: true, meta: { requiresAuth: true } },
   { path: '/teachers', name: 'Teachers', component: Teachers },
+  { path: '/teachers/admin', name: 'AdminTeachers', component: AdminTeachers, meta: { requiresAuth: true } },
   { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true },
   { path: '/teachers/:id/preview', name: 'TeacherPreview', component: TeacherPreview, props: true },
   { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
@@ -123,11 +125,17 @@ const router = createRouter({
 // Navigation guard for auth-protected routes
 router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
+  const role = getRoleFromToken()
+
+  // Redirect admins from /teachers to /teachers/admin
+  if (to.name === 'Teachers' && role === 'ADMIN') {
+    next({ name: 'AdminTeachers' })
+    return
+  }
 
   if (to.meta.requiresAuth && !token) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
   } else if (to.meta.requiresPrivileged) {
-    const role = getRoleFromToken()
     if (role !== 'TEACHER' && role !== 'ADMIN') {
       next({ name: 'Unauthorized' })
     } else {

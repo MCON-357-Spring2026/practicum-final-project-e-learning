@@ -195,6 +195,7 @@ onMounted(async () => {
 }
 
 .column ul {
+  list-style: none;
   padding-left: 1.25rem;
 }
 
@@ -202,8 +203,18 @@ onMounted(async () => {
   margin-bottom: 0.5rem;
 }
 
-.column li.completed::marker {
+.column li::before {
+  content: '📖 ';
+}
+
+.column li.completed::before {
   content: '✓ ';
+  color: #2ecc71;
+  font-weight: 700;
+}
+
+.quiz-item::before {
+  content: '❓ ';
 }
 
 .quiz-item {

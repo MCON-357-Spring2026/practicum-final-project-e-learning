@@ -22,6 +22,14 @@ export const teacherApi = {
     return axiosClient.get<LimitedTeacher[]>('/teachers/')
   },
 
+  getPending() {
+    return axiosClient.get<LimitedTeacher[]>('/teachers/pending')
+  },
+
+  getAdmins() {
+    return axiosClient.get<LimitedTeacher[]>('/teachers/admin')
+  },
+
   getById(id: string) {
     return axiosClient.get<LimitedTeacher | FullTeacher>(`/teachers/${id}`)
   },
