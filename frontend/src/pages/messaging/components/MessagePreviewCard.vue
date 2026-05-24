@@ -1,25 +1,25 @@
 <template>
   <div
     class="message-preview"
-    :class="{ unread: !message.read }"
+    :class="{ unread: !message.read && mode !== 'sent' }"
     @click="$router.push(`/messages/${message.id}`)"
   >
     <div class="preview-left">
-      <div class="avatar" :class="{ 'avatar-unread': !message.read }">
+      <div class="avatar" :class="{ 'avatar-unread': !message.read && mode !== 'sent' }">
         {{ initial }}
       </div>
     </div>
     <div class="preview-content">
       <div class="preview-top">
-        <span class="preview-name" :class="{ bold: !message.read }">{{ displayName }}</span>
+        <span class="preview-name" :class="{ bold: !message.read && mode !== 'sent' }">{{ displayName }}</span>
         <span class="preview-date">{{ formattedDate }}</span>
       </div>
-      <div class="preview-subject" :class="{ bold: !message.read }">
+      <div class="preview-subject" :class="{ bold: !message.read && mode !== 'sent' }">
         {{ message.subject || '(no subject)' }}
       </div>
       <div class="preview-snippet">{{ snippet }}</div>
     </div>
-    <div v-if="!message.read" class="unread-dot"></div>
+    <div v-if="!message.read && mode !== 'sent'" class="unread-dot"></div>
   </div>
 </template>
 
@@ -103,7 +103,7 @@ const formattedDate = computed(() => {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #ccc;
+  background-color: #e94560;
   color: #fff;
   display: flex;
   align-items: center;

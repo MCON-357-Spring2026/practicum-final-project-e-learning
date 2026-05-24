@@ -1,5 +1,6 @@
 package com.elearning.dto;
 
+import com.elearning.enums.Department;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,6 @@ public class LimitedTeacherDTO {
     private String id;
     private String firstName;
     private String lastName;
-    private String department;
+    private Department department;
     private Map<String, String> courses;
 }

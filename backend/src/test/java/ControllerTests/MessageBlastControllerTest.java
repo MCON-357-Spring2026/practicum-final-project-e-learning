@@ -4,6 +4,7 @@ import com.elearning.controller.MessageBlastController;
 import com.elearning.dto.MessageBlastDTO;
 import com.elearning.dto.MessageDTO;
 import com.elearning.dto.SendBlastDTO;
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -63,7 +64,7 @@ public class MessageBlastControllerTest {
 
         HomeAddress address = new HomeAddress("123 Main St", "Springfield", "IL", "62704");
         sender = new Teacher("Jane", "Doe", new java.util.Date(), Gender.FEMALE, address,
-                "teacher1", "password", "teacher1@example.com", Role.TEACHER, "Computer Science");
+                "teacher1", "password", "teacher1@example.com", Role.TEACHER, Department.COMPUTER_SCIENCE);
         sender.setId("teacher-1");
 
         recipient1 = new User("Alice", "Johnson", new java.util.Date(), Gender.FEMALE, address,

@@ -5,13 +5,11 @@ import com.elearning.model.Enrollment;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
 /**
  * MongoDB repository for {@link Enrollment} entities.
  * Provides CRUD operations and custom queries by student, course, or both.
  */
-@Repository
 public interface EnrollmentRepository extends MongoRepository<Enrollment, String> {
 
     /**

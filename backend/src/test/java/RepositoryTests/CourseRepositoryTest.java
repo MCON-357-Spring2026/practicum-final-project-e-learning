@@ -1,5 +1,6 @@
 package RepositoryTests;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.repository.CourseRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ public class CourseRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        testCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         testCourse.setId("1");
     }
 
@@ -35,7 +36,7 @@ public class CourseRepositoryTest {
         // Arrange
         List<Course> courses = Arrays.asList(
             testCourse,
-            new Course("Data Structures", "Dr. Johnson", "Computer Science", 4, 102, "Learn data structures")
+            new Course("Data Structures", "Dr. Johnson", Department.COMPUTER_SCIENCE, 4, 102, "Learn data structures")
         );
         when(courseRepository.findAll()).thenReturn(courses);
 
@@ -147,16 +148,16 @@ public class CourseRepositoryTest {
     void getByDepartment_ShouldReturnCoursesByDepartment() {
         // Arrange
         List<Course> courses = Arrays.asList(testCourse);
-        when(courseRepository.getByDepartment("Computer Science")).thenReturn(courses);
+        when(courseRepository.getByDepartment(Department.COMPUTER_SCIENCE)).thenReturn(courses);
 
         // Act
-        List<Course> result = courseRepository.getByDepartment("Computer Science");
+        List<Course> result = courseRepository.getByDepartment(Department.COMPUTER_SCIENCE);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Computer Science", result.get(0).getDepartment());
-        verify(courseRepository, times(1)).getByDepartment("Computer Science");
+        assertEquals(Department.COMPUTER_SCIENCE, result.get(0).getDepartment());
+        verify(courseRepository, times(1)).getByDepartment(Department.COMPUTER_SCIENCE);
     }
 
     @Test

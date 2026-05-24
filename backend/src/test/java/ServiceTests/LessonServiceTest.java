@@ -1,5 +1,6 @@
 package ServiceTests;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.model.Lesson;
 import com.elearning.repository.CourseRepository;
@@ -91,7 +92,7 @@ public class LessonServiceTest {
     @Test
     void create_ShouldSaveAndReturnLesson() {
         // Arrange
-        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         when(courseRepository.findById("course1")).thenReturn(Optional.of(course));
         when(lessonRepository.save(any(Lesson.class))).thenReturn(testLesson);
@@ -204,7 +205,7 @@ public class LessonServiceTest {
     @Test
     void delete_WhenLessonExists_ShouldCascadeRemoveFromCourse() {
         // Arrange
-        Course course = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         course.addLessonID("1");
 

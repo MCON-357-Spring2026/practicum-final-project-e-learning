@@ -1,5 +1,6 @@
 package ServiceTests;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.model.Question;
 import com.elearning.model.Quiz;
@@ -41,7 +42,7 @@ public class QuizServiceTest {
         testQuiz.setId("q1");
         testQuiz.addQuestion(new Question("What is Java?", new String[]{"Language", "Food"}, 0));
 
-        testCourse = new Course("Java Programming", "inst1", "Computer Science", 3, 101, "Intro to Java");
+        testCourse = new Course("Java Programming", "inst1", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         testCourse.setId("course1");
     }
 

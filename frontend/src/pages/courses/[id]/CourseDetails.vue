@@ -12,7 +12,7 @@
       <!-- Info band -->
       <div class="info-band">
         <span v-if="instructorName">{{ instructorName }}</span>
-        <span>{{ course.department }} {{ course.courseNum }}</span>
+        <span>{{ DEPARTMENT_LABELS[course.department] || course.department }} {{ course.courseNum }}</span>
         <span>{{ course.credits }} credits</span>
       </div>
 
@@ -52,16 +52,19 @@
         </div>
       </div>
     </template>
+    <TutorButton />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useCourseStore } from '@/store/course'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 import { useAuthStore } from '@/store/auth'
 import { lessonApi, type Lesson } from '@/api/lessonApi'
 import { quizApi, type Quiz } from '@/api/quizApi'
 import axiosClient from '@/api/axiosClient'
+import TutorButton from '@/components/TutorButton.vue'
 
 const props = defineProps<{
   id: string
@@ -213,15 +216,18 @@ onMounted(async () => {
   font-weight: 700;
 }
 
-.quiz-item::before {
+.column li.quiz-item::before {
   content: '❓ ';
 }
 
 .quiz-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
+}
+
+.quiz-item a {
+  margin-right: auto;
 }
 
 .quiz-grade {

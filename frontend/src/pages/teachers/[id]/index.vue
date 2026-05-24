@@ -21,7 +21,7 @@
 
       <section class="info-section">
         <h2>Department</h2>
-        <p>{{ teacher.department ?? 'Not assigned' }}</p>
+        <p>{{ DEPARTMENT_LABELS[teacher.department] ?? 'Not assigned' }}</p>
       </section>
 
       <section class="info-section">
@@ -55,6 +55,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { teacherApi } from '@/api/teacherApi'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 import type { FullTeacher } from '@/api/teacherApi'
 
 const route = useRoute()

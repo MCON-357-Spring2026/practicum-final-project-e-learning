@@ -2,7 +2,7 @@
   <div class="teacher-card">
     <div class="teacher-info">
       <h3>{{ teacher.firstName }} {{ teacher.lastName }}</h3>
-      <p class="department">{{ teacher.department ?? 'No department' }}</p>
+      <p class="department">{{ DEPARTMENT_LABELS[teacher.department] ?? 'No department' }}</p>
       <p class="courses">{{ courseCount }} {{ courseCount === 1 ? 'course' : 'courses' }}</p>
     </div>
     <div class="card-actions">
@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuthStore } from '@/store/auth'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 import type { LimitedTeacher } from '@/api/teacherApi'
 
 const props = withDefaults(defineProps<{

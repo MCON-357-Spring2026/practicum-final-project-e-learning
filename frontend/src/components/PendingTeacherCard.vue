@@ -2,13 +2,15 @@
   <div class="pending-card">
     <div class="pending-info">
       <h3>{{ teacher.firstName }} {{ teacher.lastName }}</h3>
-      <p class="department">{{ teacher.department ?? 'No department' }}</p>
+      <p class="department">{{ teacher.department ? DEPARTMENT_LABELS[teacher.department as Department] : 'No department' }}</p>
     </div>
     <button class="approve-btn" @click="$emit('approve', teacher.id)">Approve</button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { DEPARTMENT_LABELS } from '@/constants/departments'
+import type { Department } from '@/constants/departments'
 import type { LimitedTeacher } from '@/api/teacherApi'
 
 defineProps<{

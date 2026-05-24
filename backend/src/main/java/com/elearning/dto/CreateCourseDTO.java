@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 
 /**
@@ -17,7 +18,7 @@ public class CreateCourseDTO {
 
     private String title;
     private String description;
-    private String department;
+    private Department department;
     private int credits;
     private int courseNum;
     private String image;

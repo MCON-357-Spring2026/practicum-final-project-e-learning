@@ -1,5 +1,6 @@
 package ServiceTests;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -44,7 +45,7 @@ public class UserServiceTest {
         testUser.setId("u1");
 
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, Department.COMPUTER_SCIENCE);
         testTeacher.setId("t1");
     }
 
@@ -123,12 +124,12 @@ public class UserServiceTest {
 
     @Test
     void getTeachersByDepartment_ShouldDelegateToRepo() {
-        when(personRepository.findTeachersByDepartment("Computer Science")).thenReturn(List.of(testTeacher));
+        when(personRepository.findTeachersByDepartment(Department.COMPUTER_SCIENCE)).thenReturn(List.of(testTeacher));
 
-        List<Teacher> result = userService.getTeachersByDepartment("Computer Science");
+        List<Teacher> result = userService.getTeachersByDepartment(Department.COMPUTER_SCIENCE);
 
         assertEquals(1, result.size());
-        verify(personRepository, times(1)).findTeachersByDepartment("Computer Science");
+        verify(personRepository, times(1)).findTeachersByDepartment(Department.COMPUTER_SCIENCE);
     }
 
     @Test
@@ -170,7 +171,7 @@ public class UserServiceTest {
     @Test
     void update_WhenTeacher_ShouldUpdateTeacherFields() {
         Teacher updateData = new Teacher("Dr. Jane", "Updated", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", "jane@university.edu", Role.TEACHER, "Mathematics");
+                "jane1", "instrpass1", "jane@university.edu", Role.TEACHER, Department.MATH);
 
         when(personRepository.findById("t1")).thenReturn(Optional.of(testTeacher));
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -179,7 +180,7 @@ public class UserServiceTest {
 
         assertTrue(result.isPresent());
         assertInstanceOf(Teacher.class, result.get());
-        assertEquals("Mathematics", ((Teacher) result.get()).getDepartment());
+        assertEquals(Department.MATH, ((Teacher) result.get()).getDepartment());
     }
 
     @Test

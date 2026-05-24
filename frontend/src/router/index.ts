@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 
 import Courses from '@/pages/courses/index.vue'
 import CourseDetails from '@/pages/courses/[id]/CourseDetails.vue'
@@ -25,6 +25,7 @@ import ResourceNotFound from '@/pages/ResourceNotFound.vue'
 import Unauthorized from '@/pages/Unauthorized.vue'
 import Profile from '@/pages/Profile.vue'
 import MessagingPage from '@/pages/messaging/index.vue'
+import Tutor from '@/pages/Tutor.vue'
 
 function getRoleFromToken() {
   const token = localStorage.getItem('token')
@@ -66,7 +67,7 @@ const routes = [
     path: '/messages',
     name: 'Messages',
     component: MessagingPage,
-    props: (route) => ({
+    props: (route: RouteLocationNormalized) => ({
       view: 'inbox',
       userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
     }),
@@ -76,7 +77,7 @@ const routes = [
     path: '/messages/sent',
     name: 'MessagesSent',
     component: MessagingPage,
-    props: (route) => ({
+    props: (route: RouteLocationNormalized) => ({
       view: 'sent',
       userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
     }),
@@ -86,7 +87,7 @@ const routes = [
     path: '/messages/compose',
     name: 'MessageCompose',
     component: MessagingPage,
-    props: (route) => ({
+    props: (route: RouteLocationNormalized) => ({
       view: 'compose',
       userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
     }),
@@ -96,7 +97,7 @@ const routes = [
     path: '/messages/blasts',
     name: 'MessageBlasts',
     component: MessagingPage,
-    props: (route) => ({
+    props: (route: RouteLocationNormalized) => ({
       view: 'blasts',
       userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
     }),
@@ -106,11 +107,18 @@ const routes = [
     path: '/messages/:id',
     name: 'MessageDetail',
     component: MessagingPage,
-    props: (route) => ({
+    props: (route: RouteLocationNormalized) => ({
       view: 'detail',
       messageId: route.params.id,
       userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
     }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/tutor/:conversationId?',
+    name: 'Tutor',
+    component: Tutor,
+    props: true,
     meta: { requiresAuth: true }
   },
   { path: '/unauthorized', name: 'Unauthorized', component: Unauthorized },

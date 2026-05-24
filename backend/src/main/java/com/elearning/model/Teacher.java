@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.repository.CourseRepository;
@@ -20,12 +21,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Teacher extends User {
 
-    private String department;
+    private Department department;
     private ArrayList<String> courseIds;
 
     public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role, 
-                   String department, ArrayList<String> courseIds) {
+                   Department department, ArrayList<String> courseIds) {
         super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;
@@ -34,7 +35,7 @@ public class Teacher extends User {
 
     public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role,
-                   String department, String[] courseIds) {
+                   Department department, String[] courseIds) {
          super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;
@@ -43,7 +44,7 @@ public class Teacher extends User {
 
     public Teacher(String firstName, String lastName, Date dateOfBirth, Gender gender, HomeAddress address,
                    String username, String password, String email, Role role,
-                   String department) {
+                   Department department) {
         super(firstName, lastName, dateOfBirth, gender, address, 
             username, password, email, role);
         this.department = department;

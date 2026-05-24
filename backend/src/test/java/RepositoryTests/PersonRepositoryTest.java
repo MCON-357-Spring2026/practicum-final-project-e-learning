@@ -1,5 +1,6 @@
 package RepositoryTests;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -39,7 +40,7 @@ public class PersonRepositoryTest {
         testUser.setId("u1");
 
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, Department.COMPUTER_SCIENCE);
         testTeacher.setId("t1");
     }
 
@@ -137,11 +138,11 @@ public class PersonRepositoryTest {
 
     @Test
     void findTeachersByDepartment_ShouldReturnTeachers() {
-        when(personRepository.findTeachersByDepartment("Computer Science")).thenReturn(List.of(testTeacher));
+        when(personRepository.findTeachersByDepartment(Department.COMPUTER_SCIENCE)).thenReturn(List.of(testTeacher));
 
-        List<Teacher> result = personRepository.findTeachersByDepartment("Computer Science");
+        List<Teacher> result = personRepository.findTeachersByDepartment(Department.COMPUTER_SCIENCE);
 
         assertEquals(1, result.size());
-        assertEquals("Computer Science", result.get(0).getDepartment());
+        assertEquals(Department.COMPUTER_SCIENCE, result.get(0).getDepartment());
     }
 }

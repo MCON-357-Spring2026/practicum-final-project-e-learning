@@ -1,8 +1,8 @@
 package com.elearning.repository;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import java.util.List;
  * MongoDB repository for {@link Course} entities.
  * Provides CRUD operations and custom queries by instructor and department.
  */
-@Repository
 public interface CourseRepository extends MongoRepository<Course, String> {
 
     /**
@@ -24,9 +23,9 @@ public interface CourseRepository extends MongoRepository<Course, String> {
     /**
      * Finds all courses in a given department.
      *
-     * @param department the department name
+     * @param department the department
      * @return list of courses in the department
      */
-    public List<Course> getByDepartment(String department);
+    public List<Course> getByDepartment(Department department);
     
 }

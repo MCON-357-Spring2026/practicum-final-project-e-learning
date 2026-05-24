@@ -22,6 +22,7 @@
         @submitted="onSubmitted"
       />
     </template>
+    <TutorButton />
   </div>
 </template>
 
@@ -34,6 +35,7 @@ import axiosClient from '@/api/axiosClient'
 import QuizTaker from './QuizTaker.vue'
 import type { GradeResult } from './QuizTaker.vue'
 import QuizResult from './QuizResult.vue'
+import TutorButton from '@/components/TutorButton.vue'
 
 const props = defineProps<{
   courseId: string

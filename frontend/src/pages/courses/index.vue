@@ -5,7 +5,7 @@
     <div class="filters">
       <select v-model="filterDepartment">
         <option value="">All Departments</option>
-        <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
+        <option v-for="dept in DEPARTMENTS" :key="dept" :value="dept">{{ DEPARTMENT_LABELS[dept] }}</option>
       </select>
 
       <select v-model="filterTeacher">
@@ -43,6 +43,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useCourseStore } from '@/store/course'
 import { useAuthStore } from '@/store/auth'
 import { teacherApi } from '@/api/teacherApi'
+import { DEPARTMENTS, DEPARTMENT_LABELS } from '@/constants/departments'
 import axiosClient from '@/api/axiosClient'
 import CourseCard from '@/components/CourseCard.vue'
 

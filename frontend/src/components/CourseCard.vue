@@ -4,7 +4,7 @@
     <div class="course-image placeholder" v-else>📚</div>
     <div class="course-info">
       <h3>{{ course.title }}</h3>
-      <p class="department">{{ course.department }} {{ course.courseNum }}</p>
+      <p class="department">{{ DEPARTMENT_LABELS[course.department] || course.department }} {{ course.courseNum }}</p>
       <p class="credits">{{ course.credits }} credits</p>
     </div>
   </div>
@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 import type { Course } from '@/api/courseApi'
 
 const props = withDefaults(defineProps<{

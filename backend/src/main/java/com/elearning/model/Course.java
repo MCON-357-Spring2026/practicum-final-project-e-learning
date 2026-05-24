@@ -1,5 +1,6 @@
 package com.elearning.model;
 
+import com.elearning.enums.Department;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class Course {
     private String title;
     private String description;
     private String instructorId;
-    private String department;
+    private Department department;
     private int credits;
     private int courseNum;
     private ArrayList<String> lessonIDs;
@@ -47,7 +48,7 @@ public class Course {
      * @param courseNum    course catalog number
      * @param description  course description
      */
-    public Course(String title, String instructorId, String department, int credits, int courseNum, String description) {
+    public Course(String title, String instructorId, Department department, int credits, int courseNum, String description) {
         this.title = title;
         this.instructorId = instructorId;
         this.department = department;
@@ -58,7 +59,7 @@ public class Course {
         this.quizIDs = new ArrayList<>();
     }
 
-        public Course(String id, String title, String description,String instructorId, String department, int credits, int courseNum) {
+        public Course(String id, String title, String description,String instructorId, Department department, int credits, int courseNum) {
         this.id = id;
         this.title = title;
         this.description = description;

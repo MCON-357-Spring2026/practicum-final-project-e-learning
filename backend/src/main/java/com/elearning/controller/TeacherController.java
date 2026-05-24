@@ -2,6 +2,7 @@ package com.elearning.controller;
 
 import com.elearning.dto.LimitedTeacherDTO;
 import com.elearning.dto.TeacherDTO;
+import com.elearning.enums.Department;
 import com.elearning.enums.Role;
 import com.elearning.model.Teacher;
 import com.elearning.model.User;
@@ -148,7 +149,7 @@ public class TeacherController {
      * @return 200 with list of teacher DTOs
      */
     @GetMapping("/department/{department}")
-    public ResponseEntity<?> getTeachersByDepartment(@PathVariable String department, Authentication auth) {
+    public ResponseEntity<?> getTeachersByDepartment(@PathVariable Department department, Authentication auth) {
         List<?> dtos = userService.getTeachersByDepartment(department).stream()
                 .map(t -> toDTO(t, auth))
                 .toList();
@@ -177,12 +178,12 @@ public class TeacherController {
      * Sets a teacher's department. Requires the requesting user to be the teacher or an ADMIN.
      *
      * @param id         the teacher ID
-     * @param department the department name
+     * @param department the department
      * @return 200 with the updated teacher, or 404 if not found or not a Teacher
      */
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     @PatchMapping("/{id}/department")
-    public ResponseEntity<?> updateTeacherDepartment(@PathVariable String id, @RequestBody String department) {
+    public ResponseEntity<?> updateTeacherDepartment(@PathVariable String id, @RequestBody Department department) {
         return userService.getById(id)
                 .filter(u -> u instanceof Teacher)
                 .map(u -> {

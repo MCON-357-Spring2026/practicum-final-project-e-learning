@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Role;
 import com.elearning.model.Teacher;
 import com.elearning.model.User;
@@ -113,10 +114,10 @@ public class UserService implements ServiceInterface<User> {
     /**
      * Retrieves all teachers in a given department.
      *
-     * @param department the department name
+     * @param department the department
      * @return list of teachers in the department
      */
-    public List<Teacher> getTeachersByDepartment(String department) {
+    public List<Teacher> getTeachersByDepartment(Department department) {
         return repo.findTeachersByDepartment(department);
     }
 

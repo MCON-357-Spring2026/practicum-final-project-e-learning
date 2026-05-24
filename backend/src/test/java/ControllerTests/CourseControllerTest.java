@@ -2,6 +2,7 @@ package ControllerTests;
 
 import com.elearning.controller.CourseController;
 import com.elearning.dto.CreateCourseDTO;
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.security.AuthenticatedUser;
 import com.elearning.service.CourseService;
@@ -38,8 +39,8 @@ public class CourseControllerTest {
 
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
-        testDTO = new CreateCourseDTO("Java Programming", "Intro to Java", "Computer Science", 3, 101, "");
+        testCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
+        testDTO = new CreateCourseDTO("Java Programming", "Intro to Java", Department.COMPUTER_SCIENCE, 3, 101, "");
         testPrincipal = new AuthenticatedUser("Dr. Smith", "instructor", "TEACHER");
     }
 
@@ -47,7 +48,7 @@ public class CourseControllerTest {
     void getAllCourses_ShouldReturnListOfCourses() {
         // Arrange
         List<Course> courses = Arrays.asList(testCourse, 
-            new Course("Data Structures", "Dr. Johnson", "Computer Science", 4, 102, "Learn data structures"));
+            new Course("Data Structures", "Dr. Johnson", Department.COMPUTER_SCIENCE, 4, 102, "Learn data structures"));
         when(courseService.getAll()).thenReturn(courses);
 
         // Act
@@ -121,7 +122,7 @@ public class CourseControllerTest {
     @Test
     void updateCourse_WhenCourseExists_ShouldReturnUpdatedCourse() {
         // Arrange
-        Course updatedCourse = new Course("Java Advanced", "Dr. Smith", "Computer Science", 3, 101, "Advanced Java topics");
+        Course updatedCourse = new Course("Java Advanced", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Advanced Java topics");
         when(courseService.update(eq("1"), any(Course.class))).thenReturn(Optional.of(updatedCourse));
 
         // Act
@@ -213,7 +214,7 @@ public class CourseControllerTest {
     void updateCourse_WithQuizIDs_ShouldReturnUpdatedQuizIDs() {
         // Arrange
         ArrayList<String> quizIDs = new ArrayList<>(Arrays.asList("q1", "q3"));
-        Course updatedCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course updatedCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         updatedCourse.setQuizIDs(quizIDs);
         when(courseService.update(eq("1"), any(Course.class))).thenReturn(Optional.of(updatedCourse));
 

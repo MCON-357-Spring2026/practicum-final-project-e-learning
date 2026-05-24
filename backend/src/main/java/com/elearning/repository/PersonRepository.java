@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Role;
 import com.elearning.model.Person;
 import com.elearning.model.User;
@@ -16,7 +16,6 @@ import com.elearning.model.Teacher;
  * ({@link User}, {@link Teacher}). Provides queries for user lookup by
  * username, role, and teacher department.
  */
-@Repository
 public interface PersonRepository extends MongoRepository<Person, String>{
 
     /**
@@ -38,9 +37,9 @@ public interface PersonRepository extends MongoRepository<Person, String>{
     /**
      * Finds all teachers in a given department.
      *
-     * @param department the department name
+     * @param department the department
      * @return list of teachers in the department
      */
-    public List<Teacher> findTeachersByDepartment(String department);
+    public List<Teacher> findTeachersByDepartment(Department department);
     
 }

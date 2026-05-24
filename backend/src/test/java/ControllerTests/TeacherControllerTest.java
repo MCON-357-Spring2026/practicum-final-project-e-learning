@@ -1,6 +1,7 @@
 package ControllerTests;
 
 import com.elearning.controller.TeacherController;
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -44,7 +45,7 @@ public class TeacherControllerTest {
     void setUp() {
         testAddress = new HomeAddress("789 Elm St", "Urbana", "IL", "61801");
         testTeacher = new Teacher("Dr. Jane", "Doe", new Date(), Gender.FEMALE, testAddress,
-                "jane1", "instrpass1", null, Role.TEACHER, "Computer Science");
+                "jane1", "instrpass1", null, Role.TEACHER, Department.COMPUTER_SCIENCE);
         testTeacher.setId("t1");
 
         AuthenticatedUser adminPrincipal = new AuthenticatedUser("a1", "admin", "ADMIN");
@@ -129,10 +130,10 @@ public class TeacherControllerTest {
 
     @Test
     void getTeachersByDepartment_ShouldReturnList() {
-        when(userService.getTeachersByDepartment("Computer Science")).thenReturn(List.of(testTeacher));
+        when(userService.getTeachersByDepartment(Department.COMPUTER_SCIENCE)).thenReturn(List.of(testTeacher));
         when(userService.buildCourseMap(any())).thenReturn(Collections.emptyMap());
 
-        ResponseEntity<?> response = teacherController.getTeachersByDepartment("Computer Science", studentAuth);
+        ResponseEntity<?> response = teacherController.getTeachersByDepartment(Department.COMPUTER_SCIENCE, studentAuth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertInstanceOf(List.class, response.getBody());

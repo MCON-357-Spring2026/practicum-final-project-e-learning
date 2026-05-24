@@ -3,6 +3,7 @@ package ControllerTests;
 import com.elearning.controller.QuizController;
 import com.elearning.dto.QuizDTO;
 import com.elearning.dto.QuizPreviewDTO;
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.model.Quiz;
 import com.elearning.repository.CourseRepository;
@@ -86,7 +87,7 @@ public class QuizControllerTest {
 
     @Test
     void createQuiz_ShouldReturnCreatedQuiz() {
-        Course course = new Course("Java Programming", "inst1", "CS", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "inst1", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         course.setInstructorId("inst1");
         when(courseRepository.findById("course1")).thenReturn(Optional.of(course));
@@ -101,7 +102,7 @@ public class QuizControllerTest {
 
     @Test
     void createQuiz_WhenInvalidArg_ShouldReturn400() {
-        Course course = new Course("Java Programming", "inst1", "CS", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "inst1", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         course.setInstructorId("inst1");
         when(courseRepository.findById("course1")).thenReturn(Optional.of(course));
@@ -115,7 +116,7 @@ public class QuizControllerTest {
 
     @Test
     void createQuiz_WhenNotCourseCreator_ShouldReturn403() {
-        Course course = new Course("Java Programming", "inst1", "CS", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "inst1", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         course.setInstructorId("inst1");
         when(courseRepository.findById("course1")).thenReturn(Optional.of(course));
@@ -197,7 +198,7 @@ public class QuizControllerTest {
 
     @Test
     void getQuizForEdit_WhenExistsAndAuthorized_ShouldReturnQuiz() {
-        Course course = new Course("Java Programming", "inst1", "CS", 3, 101, "Intro to Java");
+        Course course = new Course("Java Programming", "inst1", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         course.setId("course1");
         course.setInstructorId("inst1");
         when(quizService.getById("q1")).thenReturn(Optional.of(testQuiz));
@@ -222,7 +223,7 @@ public class QuizControllerTest {
 
     @Test
     void getQuizForEdit_WhenNotAuthorized_ShouldReturn403() {
-        Course course = new Course("Java Programming" ,"inst1", "CS", 3, 101, "");
+        Course course = new Course("Java Programming" ,"inst1", Department.COMPUTER_SCIENCE, 3, 101, "");
         course.setId("course1");
         course.setInstructorId("inst1");
         when(quizService.getById("q1")).thenReturn(Optional.of(testQuiz));

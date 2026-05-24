@@ -13,6 +13,7 @@
         @complete="markComplete"
       />
     </template>
+    <TutorButton />
   </div>
 </template>
 
@@ -22,6 +23,7 @@ import { lessonApi, type Lesson } from '@/api/lessonApi'
 import { useAuthStore } from '@/store/auth'
 import axiosClient from '@/api/axiosClient'
 import LessonPlayer from '@/components/LessonPlayer.vue'
+import TutorButton from '@/components/TutorButton.vue'
 
 const props = defineProps<{
   courseId: string

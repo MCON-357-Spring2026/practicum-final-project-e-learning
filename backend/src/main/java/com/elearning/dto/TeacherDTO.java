@@ -1,5 +1,6 @@
 package com.elearning.dto;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
 import com.elearning.model.HomeAddress;
@@ -28,7 +29,7 @@ public class TeacherDTO {
     private HomeAddress address;
     private String email;
     private Role role;
-    private String department;
+    private Department department;
     /** Map of courseId to course title. */
     private Map<String, String> courses;
     /** Map of enrollmentId to course title. */

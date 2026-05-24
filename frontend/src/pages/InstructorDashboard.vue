@@ -10,9 +10,10 @@
     <div v-else-if="courses.length" class="course-list">
       <div v-for="course in courses" :key="course.id" class="course-item">
         <h3>{{ course.title }}</h3>
-        <p>{{ course.department }} {{ course.courseNum }} · {{ course.credits }} credits</p>
+        <p>{{ DEPARTMENT_LABELS[course.department] || course.department }} {{ course.courseNum }} · {{ course.credits }} credits</p>
         <div class="course-actions">
           <router-link :to="`/courses/${course.id}`">View</router-link>
+          <router-link :to="`/courses/${course.id}/edit`">Edit</router-link>
           <router-link :to="`/courses/${course.id}/create-lesson`">+ Lesson</router-link>
           <router-link :to="`/courses/${course.id}/create-quiz`">+ Quiz</router-link>
         </div>
@@ -27,6 +28,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { courseApi, type Course } from '@/api/courseApi'
 import { useAuthStore } from '@/store/auth'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 
 const courses = ref<Course[]>([])
 const loading = ref(false)

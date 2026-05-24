@@ -2,7 +2,7 @@
   <div class="message-detail-view">
     <div class="message-toolbar">
       <div class="toolbar-right">
-        <button class="btn-unread" @click="markUnread" v-if="message?.read">Mark as unread</button>
+        <button class="btn-unread" @click="markUnread" v-if="message?.read && auth.user?.id === message?.receiverId">Mark as unread</button>
         <button class="btn-delete" @click="deleteMessage">Delete</button>
       </div>
     </div>
@@ -49,6 +49,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { messageApi } from '@/api/messageApi'
+import { useAuthStore } from '@/store/auth'
 
 interface MessageDTO {
   id: string
@@ -69,6 +70,7 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+const auth = useAuthStore()
 const message = ref<MessageDTO | null>(null)
 const loading = ref(true)
 const error = ref('')
@@ -119,7 +121,7 @@ onMounted(async () => {
   try {
     const { data } = await messageApi.getById(props.messageId)
     message.value = data
-    if (!data.read) {
+    if (!data.read && auth.user?.id === data.receiverId) {
       await messageApi.markAsRead(props.messageId)
     }
   } catch {

@@ -10,7 +10,7 @@
 
       <div class="info-band">
         <span v-if="instructorName">{{ instructorName }}</span>
-        <span>{{ course.department }} {{ course.courseNum }}</span>
+        <span>{{ DEPARTMENT_LABELS[course.department] || course.department }} {{ course.courseNum }}</span>
         <span>{{ course.credits }} credits</span>
       </div>
 
@@ -40,6 +40,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { courseApi, type Course } from '@/api/courseApi'
+import { DEPARTMENT_LABELS } from '@/constants/departments'
 import axiosClient from '@/api/axiosClient'
 
 const props = defineProps<{ id: string }>()

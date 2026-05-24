@@ -1,5 +1,6 @@
 package ServiceTests;
 
+import com.elearning.enums.Department;
 import com.elearning.model.Course;
 import com.elearning.repository.CourseRepository;
 import com.elearning.repository.PersonRepository;
@@ -35,7 +36,7 @@ public class CourseServiceTest {
 
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        testCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
     }
 
     @Test
@@ -43,7 +44,7 @@ public class CourseServiceTest {
         // Arrange
         List<Course> courses = Arrays.asList(
             testCourse,
-            new Course("Data Structures", "Dr. Johnson", "Computer Science", 4, 102, "Learn data structures")
+            new Course("Data Structures", "Dr. Johnson", Department.COMPUTER_SCIENCE, 4, 102, "Learn data structures")
         );
         when(courseRepository.findAll()).thenReturn(courses);
 
@@ -101,7 +102,7 @@ public class CourseServiceTest {
     @Test
     void update_WhenCourseExists_ShouldUpdateAndReturnCourse() {
         // Arrange
-        Course updatedData = new Course("Java Advanced", "Dr. Smith", "Computer Science", 3, 101, "Advanced Java topics");
+        Course updatedData = new Course("Java Advanced", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Advanced Java topics");
         when(courseRepository.findById("1")).thenReturn(Optional.of(testCourse));
         when(courseRepository.save(any(Course.class))).thenReturn(updatedData);
 
@@ -193,10 +194,10 @@ public class CourseServiceTest {
     void update_WhenCourseExists_ShouldUpdateQuizIDs() {
         // Arrange
         ArrayList<String> quizIDs = new ArrayList<>(Arrays.asList("q1", "q2"));
-        Course updatedData = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course updatedData = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         updatedData.setQuizIDs(quizIDs);
 
-        Course existingCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course existingCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         existingCourse.setQuizIDs(new ArrayList<>());
 
         when(courseRepository.findById("1")).thenReturn(Optional.of(existingCourse));
@@ -222,7 +223,7 @@ public class CourseServiceTest {
         // quizIDs remains null since we used no-arg constructor and didn't set it
 
         ArrayList<String> existingQuizIDs = new ArrayList<>(Arrays.asList("q1"));
-        Course existingCourse = new Course("Java Programming", "Dr. Smith", "Computer Science", 3, 101, "Intro to Java");
+        Course existingCourse = new Course("Java Programming", "Dr. Smith", Department.COMPUTER_SCIENCE, 3, 101, "Intro to Java");
         existingCourse.setQuizIDs(existingQuizIDs);
 
         when(courseRepository.findById("1")).thenReturn(Optional.of(existingCourse));

@@ -15,7 +15,10 @@
       <div class="form-row">
         <div class="form-group">
           <label for="department">Department</label>
-          <input id="department" v-model="form.department" type="text" required />
+          <select id="department" v-model="form.department" required>
+            <option value="" disabled>-- Select Department --</option>
+            <option v-for="dept in DEPARTMENTS" :key="dept" :value="dept">{{ DEPARTMENT_LABELS[dept] }}</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="courseNum">Course Number</label>
@@ -89,6 +92,7 @@ import { useRouter } from 'vue-router'
 import { courseApi } from '@/api/courseApi'
 import { lessonApi } from '@/api/lessonApi'
 import { quizApi } from '@/api/quizApi'
+import { DEPARTMENTS, DEPARTMENT_LABELS } from '@/constants/departments'
 
 const props = defineProps<{
   id: string

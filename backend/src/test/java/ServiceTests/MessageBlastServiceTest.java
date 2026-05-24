@@ -1,8 +1,8 @@
 package ServiceTests;
 
+import com.elearning.enums.Department;
 import com.elearning.enums.Gender;
 import com.elearning.enums.Role;
-import com.elearning.model.Course;
 import com.elearning.model.Enrollment;
 import com.elearning.model.HomeAddress;
 import com.elearning.model.Message;
@@ -63,7 +63,7 @@ public class MessageBlastServiceTest {
         HomeAddress address = new HomeAddress("123 Main St", "Springfield", "IL", "62704");
 
         teacher = new Teacher("Jane", "Doe", new java.util.Date(), Gender.FEMALE, address,
-                "teacher1", "password", "teacher1@example.com", Role.TEACHER, "Computer Science");
+                "teacher1", "password", "teacher1@example.com", Role.TEACHER, Department.COMPUTER_SCIENCE);
         teacher.setId("teacher-1");
 
         admin = new User("Admin", "User", new java.util.Date(), Gender.MALE, address,
