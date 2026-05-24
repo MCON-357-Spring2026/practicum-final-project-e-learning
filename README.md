@@ -8,7 +8,6 @@ A full-stack e-learning platform built with **Spring Boot** and **Vue.js**, enab
 - **Java 21** with **Spring Boot 3.3**
 - **MongoDB** (Spring Data MongoDB)
 - **Spring Security** with **JWT** authentication
-- **SendGrid** for email/messaging
 - **Lombok** for reduced boilerplate
 - **Maven** build system
 
