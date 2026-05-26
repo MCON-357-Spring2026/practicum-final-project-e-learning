@@ -74,6 +74,12 @@ public class LessonService implements ServiceInterface<Lesson> {
             if (lesson.getResources() != null) {
                 updatedLesson.setResources(lesson.getResources());
             }
+            if (lesson.getText() != null) {
+                updatedLesson.setText(lesson.getText());
+            }
+            if (lesson.getMedia() != null) {
+                updatedLesson.setMedia(lesson.getMedia());
+            }
             return Optional.of(repo.save(updatedLesson));
         } else {
             return Optional.empty();

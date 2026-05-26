@@ -6,7 +6,7 @@
       <router-link :to="`/courses/${courseId}`" class="back-link">← Back to course</router-link>
       <LessonPlayer
         :lesson="lesson"
-        :showComplete="!!authStore.user"
+        :showComplete="!!authStore.user && !isInstructor"
         :completed="lessonCompleted"
         :completing="completing"
         :completeError="completeError"
@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { lessonApi, type Lesson } from '@/api/lessonApi'
+import { courseApi } from '@/api/courseApi'
 import { useAuthStore } from '@/store/auth'
 import axiosClient from '@/api/axiosClient'
 import LessonPlayer from '@/components/LessonPlayer.vue'
@@ -37,6 +38,7 @@ const error = ref('')
 const lessonCompleted = ref(false)
 const completing = ref(false)
 const completeError = ref('')
+const isInstructor = ref(false)
 
 async function markComplete() {
   if (!authStore.user) return
@@ -66,8 +68,18 @@ onMounted(async () => {
     loading.value = false
   }
 
-  // Check if already completed
+  // Check if user is the instructor
   if (authStore.user) {
+    try {
+      const courseRes = await courseApi.getById(props.courseId)
+      if (courseRes.data.instructorId === authStore.user.id) {
+        isInstructor.value = true
+      }
+    } catch { /* ignore */ }
+  }
+
+  // Check if already completed
+  if (authStore.user && !isInstructor.value) {
     try {
       const enrollRes = await axiosClient.get(
         `/enrollments/student/${authStore.user.id}/course/${props.courseId}`

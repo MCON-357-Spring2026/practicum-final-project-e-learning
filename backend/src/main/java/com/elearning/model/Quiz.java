@@ -2,6 +2,7 @@ package com.elearning.model;
 
 import com.elearning.errors.CourseNotFoundException;
 import com.elearning.repository.CourseRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,14 +43,14 @@ public class Quiz {
     public Quiz(String courseId, String title, Question[] questions) {
         this.courseId = courseId;
         this.title = title;
-        setQuestions(questions);
+        this.questions = new ArrayList<>();
+        for (Question q : questions) {
+            this.questions.add(q);
+        }
     }
 
-    public void setQuestions(ArrayList<Question> questions) {
-        this.questions = questions;
-    }
-
-    public void setQuestions(Question[] questions) {
+    @JsonIgnore
+    public void setQuestionsFromArray(Question[] questions) {
         this.questions = new ArrayList<>();
         for (Question q : questions) {
             this.questions.add(q);
