@@ -33,11 +33,11 @@ export const chatApi = {
   getPreviewsByPersonId(personId: string) {
     return axiosClient.get<ChatPreview[]>(`/chats/person/${personId}/previews`)
   },
-  start(personId: string, payload: { subject: string; userMessage: string }) {
+  start(personId: string, payload: { subject: string; userMessage: string; timestamp: string }) {
     return axiosClient.post<ChatConversation>(`/chats/person/${personId}/start`, payload)
   },
-  sendMessage(conversationId: string, userMessage: string) {
-    return axiosClient.patch<ChatConversation>(`/chats/${conversationId}/message`, { userMessage })
+  sendMessage(conversationId: string, userMessage: string, timestamp: string) {
+    return axiosClient.patch<ChatConversation>(`/chats/${conversationId}/message`, { userMessage, timestamp })
   },
   rename(id: string, title: string) {
     return axiosClient.patch<ChatConversation>(`/chats/${id}/rename`, title)

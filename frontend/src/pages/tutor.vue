@@ -178,13 +178,27 @@ async function startConversation(body: string) {
 	const userId = auth.user?.id
 	if (!userId || !pendingSubject.value) return
 
+	const now = new Date()
+	const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`
+
+	// Show user message optimistically
+	conversation.value = {
+		conversationId: '',
+		personId: userId,
+		title: '',
+		subject: pendingSubject.value,
+		messages: [{ message: body, from: 'USER', time: timestamp }]
+	}
+	scrollToBottom()
+
 	sending.value = true
 	sendError.value = ''
 	newMessage.value = ''
 	try {
 		const { data } = await chatApi.start(userId, {
 			subject: pendingSubject.value,
-			userMessage: body
+			userMessage: body,
+			timestamp
 		})
 		conversation.value = data
 		pendingSubject.value = null
@@ -199,13 +213,20 @@ async function startConversation(body: string) {
 }
 
 async function sendMessage(body: string) {
-	if (!props.conversationId) return
+	if (!props.conversationId || !conversation.value) return
+
+	const now = new Date()
+	const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`
+
+	// Show user message optimistically
+	conversation.value.messages.push({ message: body, from: 'USER', time: timestamp })
+	scrollToBottom()
 
 	sending.value = true
 	sendError.value = ''
 	newMessage.value = ''
 	try {
-		const { data } = await chatApi.sendMessage(props.conversationId, body)
+		const { data } = await chatApi.sendMessage(props.conversationId, body, timestamp)
 		conversation.value = data
 		scrollToBottom()
 	} catch {

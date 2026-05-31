@@ -109,9 +109,7 @@ public class ChatService implements ServiceInterface<ChatConversation> {
      * 2. Calls OpenAI to get an agent response to the user's prompt.
      * 3. Saves and returns the initialized ChatConversation.
      */
-    public ChatConversation start(String personId, Department subject, String systemMessage, String userMessage) {
-        
-        LocalDateTime initial = LocalDateTime.now();
+    public ChatConversation start(String personId, Department subject, String systemMessage, String userMessage, LocalDateTime userTimestamp) {
 
         // Generate a short title
         String title = callOpenAi(
@@ -123,12 +121,12 @@ public class ChatService implements ServiceInterface<ChatConversation> {
         // Get the agent's actual response
         String agentReply = callOpenAi(systemMessage, userMessage);
 
-        LocalDateTime after = LocalDateTime.now();
+        LocalDateTime agentTime = LocalDateTime.now();
 
         ArrayList<ChatMessage> messages = new ArrayList<>();
-        messages.add(new ChatMessage(systemMessage, Sender.SYSTEM, initial));
-        messages.add(new ChatMessage(userMessage, Sender.USER, initial));
-        messages.add(new ChatMessage(agentReply, Sender.AGENT, after));
+        messages.add(new ChatMessage(systemMessage, Sender.SYSTEM, userTimestamp));
+        messages.add(new ChatMessage(userMessage, Sender.USER, userTimestamp));
+        messages.add(new ChatMessage(agentReply, Sender.AGENT, agentTime));
 
         ChatConversation conversation = ChatConversation.builder()
                 .personId(personId)
@@ -144,10 +142,9 @@ public class ChatService implements ServiceInterface<ChatConversation> {
      * Adds a user message to an existing conversation, calls OpenAI for a response,
      * appends both to the message list, and saves.
      */
-    public Optional<ChatConversation> message(String conversationId, String userMessage) {
+    public Optional<ChatConversation> message(String conversationId, String userMessage, LocalDateTime userTimestamp) {
         return repo.findById(conversationId).map(conversation -> {
-            LocalDateTime now = LocalDateTime.now();
-            conversation.getMessages().add(new ChatMessage(userMessage, Sender.USER, now));
+            conversation.getMessages().add(new ChatMessage(userMessage, Sender.USER, userTimestamp));
 
             // Build context from conversation history
             String context = buildContext(conversation);

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -150,11 +151,19 @@ public class ChatController {
     public ResponseEntity<?> startConversation(@PathVariable String personId, @RequestBody Map<String, String> body) {
         String subjectStr = body.get("subject");
         String userMessage = body.get("userMessage");
+        String timestampStr = body.get("timestamp");
 
-        if (subjectStr == null || userMessage == null) {
+        if (subjectStr == null || userMessage == null || timestampStr == null) {
             return ResponseEntity.badRequest().body(Map.of(
-                    "error", "subject and userMessage are required"
+                    "error", "subject, userMessage, and timestamp are required"
             ));
+        }
+
+        LocalDateTime userTimestamp;
+        try {
+            userTimestamp = LocalDateTime.parse(timestampStr);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid timestamp format"));
         }
 
         Department subject;
@@ -170,7 +179,7 @@ public class ChatController {
                 + " If you don't know the answer, say you don't know. Always be polite and encouraging. If asked about"
                 + " anything unrelated to " + subjectLabel + ", politely explain that you can only help with " + subjectLabel + " topics.";
 
-        return ResponseEntity.ok(chatService.start(personId, subject, systemMessage, userMessage));
+        return ResponseEntity.ok(chatService.start(personId, subject, systemMessage, userMessage, userTimestamp));
     }
 
     /**
@@ -197,11 +206,19 @@ public class ChatController {
     @PatchMapping("/{conversationId}/message")
     public ResponseEntity<?> messageConversation(@PathVariable String conversationId, @RequestBody Map<String, String> body) {
         String userMessage = body.get("userMessage");
-        if (userMessage == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "userMessage is required"));
+        String timestampStr = body.get("timestamp");
+        if (userMessage == null || timestampStr == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "userMessage and timestamp are required"));
         }
 
-        return chatService.message(conversationId, userMessage)
+        LocalDateTime userTimestamp;
+        try {
+            userTimestamp = LocalDateTime.parse(timestampStr);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid timestamp format"));
+        }
+
+        return chatService.message(conversationId, userMessage, userTimestamp)
                 .map(updated -> ResponseEntity.ok((Object) updated))
                 .orElse(ResponseEntity.notFound().build());
     }
