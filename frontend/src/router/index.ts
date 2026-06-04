@@ -1,0 +1,157 @@
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
+
+import Courses from '@/pages/courses/index.vue'
+import CourseDetails from '@/pages/courses/[id]/CourseDetails.vue'
+import CoursePreview from '@/pages/courses/[id]/preview.vue'
+import EditCourse from '@/pages/courses/[id]/EditCourse.vue'
+import CreateCourse from '@/pages/courses/CreateCourse.vue'
+import Login from '@/pages/Login.vue'
+import Register from '@/pages/Register.vue'
+import CreateLesson from '@/pages/courses/[id]/lessons/CreateLesson.vue'
+import CreateQuiz from '@/pages/courses/[id]/quizes/CreateQuiz.vue'
+import InstructorDashboard from '@/pages/InstructorDashboard.vue'
+import StudentDashboard from '@/pages/StudentDashboard.vue'
+import LessonView from '@/pages/courses/[id]/lessons/[id]/LessonView.vue'
+import QuizView from '@/pages/courses/[id]/quizes/[id]/QuizView.vue'
+import EditQuiz from '@/pages/courses/[id]/quizes/[id]/EditQuiz.vue'
+import EditLesson from '@/pages/courses/[id]/lessons/[id]/EditLesson.vue'
+import Teachers from '@/pages/teachers/index.vue'
+import AdminTeachers from '@/pages/teachers/AdminView.vue'
+import TeacherDetail from '@/pages/teachers/[id]/index.vue'
+import TeacherPreview from '@/pages/teachers/[id]/preview.vue'
+import CourseLessons from '@/pages/courses/[id]/lessons/index.vue'
+import CourseQuizzes from '@/pages/courses/[id]/quizes/index.vue'
+import ResourceNotFound from '@/pages/ResourceNotFound.vue'
+import Unauthorized from '@/pages/Unauthorized.vue'
+import Profile from '@/pages/Profile.vue'
+import MessagingPage from '@/pages/messaging/index.vue'
+import Tutor from '@/pages/Tutor.vue'
+
+function getRoleFromToken() {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.role ?? null
+  } catch {
+    return null
+  }
+}
+
+const routes = [
+  { path: '/', redirect: '/courses' },
+  { path: '/courses', name: 'Courses', component: Courses },
+  { path: '/courses/create', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true } },
+  { path: '/courses/:id', name: 'CourseDetails', component: CourseDetails, props: true },
+  { path: '/courses/:id/preview', name: 'CoursePreview', component: CoursePreview, props: true },
+  { path: '/courses/:id/edit', name: 'EditCourse', component: EditCourse, props: true, meta: { requiresAuth: true } },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/register', name: 'Register', component: Register },
+  { path: '/courses/:courseId/create-lesson', name: 'CreateLesson', component: CreateLesson, props: true, meta: { requiresAuth: true } },
+  { path: '/courses/:courseId/create-quiz', name: 'CreateQuiz', component: CreateQuiz, props: true, meta: { requiresAuth: true } },
+  { path: '/instructor', name: 'InstructorDashboard', component: InstructorDashboard, meta: { requiresAuth: true } },
+  { path: '/dashboard', name: 'StudentDashboard', component: StudentDashboard, meta: { requiresAuth: true } },
+  { path: '/courses/:id/lessons', name: 'CourseLessons', component: CourseLessons, props: true },
+  { path: '/courses/:id/quizzes', name: 'CourseQuizzes', component: CourseQuizzes, props: true },
+  { path: '/courses/:courseId/lessons/:lessonId', name: 'LessonView', component: LessonView, props: true },
+  { path: '/courses/:courseId/lessons/:lessonId/edit', name: 'EditLesson', component: EditLesson, props: true, meta: { requiresAuth: true } },
+  { path: '/courses/:courseId/quiz/:quizId', name: 'QuizView', component: QuizView, props: true, meta: { requiresAuth: true } },
+  { path: '/courses/:courseId/quiz/:quizId/edit', name: 'EditQuiz', component: EditQuiz, props: true, meta: { requiresAuth: true } },
+  { path: '/teachers', name: 'Teachers', component: Teachers },
+  { path: '/teachers/admin', name: 'AdminTeachers', component: AdminTeachers, meta: { requiresAuth: true } },
+  { path: '/teachers/:id', name: 'TeacherDetail', component: TeacherDetail, props: true },
+  { path: '/teachers/:id/preview', name: 'TeacherPreview', component: TeacherPreview, props: true },
+  { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
+  {
+    path: '/messages',
+    name: 'Messages',
+    component: MessagingPage,
+    props: (route: RouteLocationNormalized) => ({
+      view: 'inbox',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/sent',
+    name: 'MessagesSent',
+    component: MessagingPage,
+    props: (route: RouteLocationNormalized) => ({
+      view: 'sent',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/compose',
+    name: 'MessageCompose',
+    component: MessagingPage,
+    props: (route: RouteLocationNormalized) => ({
+      view: 'compose',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/messages/blasts',
+    name: 'MessageBlasts',
+    component: MessagingPage,
+    props: (route: RouteLocationNormalized) => ({
+      view: 'blasts',
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true, requiresPrivileged: true }
+  },
+  {
+    path: '/messages/:id',
+    name: 'MessageDetail',
+    component: MessagingPage,
+    props: (route: RouteLocationNormalized) => ({
+      view: 'detail',
+      messageId: route.params.id,
+      userId: typeof route.query.userId === 'string' ? route.query.userId : undefined
+    }),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/tutor/:conversationId?',
+    name: 'Tutor',
+    component: Tutor,
+    props: true,
+    meta: { requiresAuth: true }
+  },
+  { path: '/unauthorized', name: 'Unauthorized', component: Unauthorized },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: ResourceNotFound }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+// Navigation guard for auth-protected routes
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('token')
+  const role = getRoleFromToken()
+
+  // Redirect admins from /teachers to /teachers/admin
+  if (to.name === 'Teachers' && role === 'ADMIN') {
+    next({ name: 'AdminTeachers' })
+    return
+  }
+
+  if (to.meta.requiresAuth && !token) {
+    next({ name: 'Login', query: { redirect: to.fullPath } })
+  } else if (to.meta.requiresPrivileged) {
+    if (role !== 'TEACHER' && role !== 'ADMIN') {
+      next({ name: 'Unauthorized' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
+export default router

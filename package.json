@@ -1,0 +1,13 @@
+{
+  "name": "e-learning-platform",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"cd backend && mvn spring-boot:run\" \"cd frontend && npm run dev\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && mvn spring-boot:run"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

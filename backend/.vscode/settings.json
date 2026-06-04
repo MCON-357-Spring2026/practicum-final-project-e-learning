@@ -1,0 +1,10 @@
+{
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\Users\\elish\\AppData\\Local\\Programs\\Java\\openlogic-openjdk-21.0.9+10-windows-x64",
+            "default": true
+        }
+    ],
+    "java.jdt.ls.java.home": "C:\\Users\\elish\\AppData\\Local\\Programs\\Java\\openlogic-openjdk-21.0.9+10-windows-x64"
+}
