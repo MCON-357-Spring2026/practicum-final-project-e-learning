@@ -29,7 +29,7 @@ public class Lesson {
     private String description;
     private int minutes;
     private ArrayList<String> resources;
-    private ArrayList<String> media; // URLs to images and videos (e.g., S3, Cloudinary, or GridFS references)
+    private ArrayList<String> media; // URLs to images only (e.g., S3, Cloudinary, or GridFS references)
     private String text;
     
 

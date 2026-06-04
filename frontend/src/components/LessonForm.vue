@@ -24,12 +24,11 @@
 
     <!-- Media upload -->
     <div class="form-group">
-      <label>Media (images &amp; videos)</label>
-      <input type="file" accept="image/*,video/*" multiple @change="onMediaSelected" />
+      <label>Media (images only)</label>
+      <input type="file" accept="image/*" multiple @change="onMediaSelected" />
       <div v-if="mediaPreviews.length" class="preview-grid">
         <div v-for="(item, i) in mediaPreviews" :key="i" class="preview-item">
-          <video v-if="item.type === 'video'" :src="item.url" controls class="preview-media" />
-          <img v-else :src="item.url" class="preview-media" />
+          <img :src="item.url" class="preview-media" />
           <button type="button" class="remove-btn media-remove" @click="removeMedia(i)">&times;</button>
         </div>
       </div>

@@ -70,6 +70,18 @@ e-learning-platform/
 - Bidirectional conversation view, date-based queries
 - Full messaging center with inbox, sent, compose, and blasts views
 
+## User Journeys & Data Flow
+- **Student journey**: login → browse courses → enroll → view lessons and media → complete lessons → take quizzes → use AI tutor and messaging.
+- **Teacher journey**: register/pending approval → create course → add lessons, quizzes, and lesson media → review student enrollments → send direct and blast messages.
+- **Admin journey**: approve/publish teachers, promote roles, manage users, and oversee messaging and course content.
+
+- **API flow**: frontend Axios calls carry JWT in `Authorization`. Controllers accept requests, services apply business rules, repositories persist MongoDB documents.
+- **Lesson data**: `Lesson` documents store `courseId`, text, duration, resource links, and `media` as `ArrayList<String>` URLs or data URLs.
+- **Course/lesson linkage**: courses keep lesson IDs, lessons reference a course by `courseId`, and enrollments record completed lessons and quiz grades.
+- **Messaging flow**: messages are stored as `Message` documents; blast sends create `MessageBlast` documents referencing message IDs.
+- **AI tutor flow**: chat conversations are stored as `ChatConversation` documents with message history, department context, and GPT-driven responses.
+- **Security flow**: JWT tokens are issued at login/registration, validated by `JwtFilter`, and route-access is enforced by backend role checks and frontend auth guards.
+
 ### Authentication & Authorization
 - JWT-based stateless authentication with 24-hour token expiry
 - BCrypt password hashing
